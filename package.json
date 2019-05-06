@@ -1,0 +1,15 @@
+{
+  "name": "om-lesson-title",
+  "version": "1.0.0",
+  "repository": "https://github.homedepot.com/OM-JavaScript/om-lesson-title.git",
+  "author": "Orange Method",
+  "license": "MIT",
+  "scripts": {
+    "latest": "yarn upgrade",
+    "watch": "yarn watchman adoc \"yarn render <%= @file %>\""
+  },
+  "dependencies": {
+    "@orangemethod/asciidoc-common": "^1.0.0",
+    "watchman": "^0.1.8"
+  }
+}
