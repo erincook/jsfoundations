@@ -1,0 +1,254 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: What is Javascript?
+:tags: javascript
+:description: Our first look at JavaScript
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+= Alt Pygments theme
+:source-highlighter: pygments
+:pygments-style: monokai
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+
+## Learning Objectives
+
+### Concepts
+
+* Discuss the history of JavaScript
+* Describe JavaScript as both an OOP and a FP language
+* Describe the role of JavaScript on the server and client
+
+## JavaScript History and Fun Facts
+
+* *JavaScript* is not to be confused with *_Java_*; they are 2 completely different programming languages!
+  - "Java is to JavaScript as ham is to hamster."
+* JavaScript was created *in 10 days* in May 1995 by Brendan Eich, then working at Netscape and now of Mozilla.
+* Eich was inspired by several other languages including *_Scheme_* (a variant of Lisp) and *_Self_*.
+* In 1996 - 1997 JavaScript was taken to *ECMA* to carve out a standard specification, which other browser vendors could then implement based on the work done at Netscape.
+* *JavaScript* has become the *de facto standard* language for Web pages running in a browser.
+* Thanks to *NodeJS* and the *V8 JavaScript* engine developed at Google, *JavaScript* can now be used outside of the browser as a general purpose, full featured programming language.
+* *JavaScript* is arguably the *fastest growing* (in popularity) programming language.
+* *JavaScript* is a general purpose programming language that supports the two most common programming paradigms: *Object Oriented Programming* (OOP) and *Functional Programming* (FP).
+* The recent trend (since approx. 2012) is to use *JavaScript* in a more *Functional Programming* style.
+* *JavaScript* is http://javascript.crockford.com/javascript.html[the world's most misunderstood programming language].
+
+image::javascript-misunderstood.png[JavaScript Misunderstood^]
+
+TIP: If you'd like to read more about ECMAScript (the language that forms the basis of JavaScript), https://tc39.github.io/ecma262/[this^] is an in-depth look at the current specification.
+
+
+## Course Introduction
+
+This course will primarily focus JavaScript's core features. What makes it unique and how to write JavaScript for any type of environment. 
+
+More than 80% of what we'll discuss can be used in the browser and on the server. 
+
+Our primary context will focus on server side programming. For that we'll be using the NodeJS runtime (more on that later). 
+
+## JS in the Browser
+
+Before moving forward however, let's briefly discuss using JavaScript in the browser.
+
+The anatomy of a web-app or website consists of HTML, CSS and JavaScript.
+
+* *HTML* is used to define the content of the website
+* *CSS* is used to define the look of the website (fonts, colors, spacing, etc.).
+* *JavaScript* is used to add _dynamic_ behavior to the website, such as:
+
+  - interacting with the user
+  - sending data to the server
+  - receiving data from the server
+  - updating the DOM (what the user sees on the screen)
+
+### Javascript and HTML Pages - Where does the JavaScript go?
+
+When placing JavaScript in a web page, the JavaScript can go in one of the following locations:
+
+* In a script tag inside the head section
+* In a script tag inside the body section
+* In a separate file loaded by the script tag
+
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Yo</title>
+    <script>
+      console.log('I am in the head section.');
+      let x = 3;
+      console.log('The value of x is ' + x);
+    </script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <h1>Hello, Orange Method!</h1>
+    <script>
+      console.log('I am in the body section.');
+      x += 5;
+      console.log('The value of x is ' + x);
+    </script>
+  </body>
+</html>
+```
+
+[source,javascript,linenums]
+.app.js
+----
+console.log("I'm in a script!");
+----
+
+
+The World Wide Web Consortium (or, W3C) writes the specification for the parts of JavaScript that deal with interacting with HTML elements. This is the same organization that creates the specification for HTML.
+
+
+### The JavaScript browser console
+
+We can open a JavaScript console in Chrome by pressing kbd:[Command + Option + J]. The window that appears is an interactive JavaScript environment known as a REPL.
+
+image::js-hello-world.png[]
+
+Try typing
+[source,javascript]
+console.log("Hello, World");
+
+in the console, then press kbd:[Return].
+
+What about `2 + 2`? Now, try `8 * 7`.
+
+The acronym REPL stands for 
+
+- Read
+- Evaluate
+- Print
+- Loop
+
+REPL's give us the option of interacting with our code in real time. They are often used as scratch pads for testing out ideas.
+ 
+
+Please note that actions performed in the browser's console do not save. Once you refresh all the previous data is no longer available.
+
+
+### Other Online Tools
+
+The browser console is not the only repl available to us. With Node you're able to run a repl right in your terminal. 
+
+In additional to that, there are many applications that sit on top of repl, that offer a more robust set of features.
+
+A few of our favorites include: 
+
+* https://repl.it/languages/javascript[repl.it^]
+* http://codepen.io/[codepen^]
+* https://jsfiddle.net/[jsfiddle^]
+* https://jsbin.com/[jsbin^]
+
+
+## NodeJS
+
+Thanks to Google and V8 we can now run JavaScript outside of the browser. From V8 came NodeJS where we can run full featured server applications and other CLI applications.
+
+As stated earlier, we'll be using Node as the primary environment during this class. This allows us to write code in our local text editors, save it, and run the program in our terminals. Let's try it out!
+
+For example, we could have a program living in a file named `app.js` that prints "Hello World" when the user runs it. 
+
+[source,javascript,linenums]
+.app.js
+----
+console.log("Hello World")
+----
+
+To run this program we type the following into the terminal.
+
+```bash
+node app.js
+```
+
+Which will result in 
+
+```javascript
+Hello World
+```
+
+In addition to that, we can run a REPL by only typing `node` into the terminal.
+
+```bash
+$ node
+> 
+```
+
+Node offers a robust set of modules for server side programming. Including the ability to interact with the file system, work with HTTP and a lot more. 
+
+## Exercises
+
+##### Part 1. Playground Directory
+This directory will be used to store the projects and exercises you complete during this course. 
+
+*NOTE:* Your environment _should_ be ready to use. If you experience environment issues or equipment failure, reach out to an instructor for assistance.
+
+. In the *terminal*, create a new directory by typing 
+```
+mkdir js-foundations
+```
+[start=2]
+. cd into `js-foundations`
+. Create a subdirectory 
+```
+mkdir js-playground
+```
+
+##### Part 2. Basic Addition
+
+. cd into `js-playground`
+. In the *terminal*, use the *touch* command to create a new file 
+```
+touch math.js
+```
+[start=3]
+. Using your text editor, add the following code to the `math.js` file:
+
+[source,javascript,linenums]
+.math.js
+----
+console.log(6+8);
+console.log('Sum of 7 + 2 =',  7+2);
+----
+
+[start=4]
+. Time to run the program! In the terminal type
+```
+node math.js
+```
+
+
+##### Part 3. Hello Darth!
+
+. Create a new file named `myName.js`.
+. In `myName.js` add:
+
+[source,javascript,linenums]
+.myName.js
+----
+let firstName = 'Darth';
+console.log('Hello! My name is ' + firstName + '!');
+----
+
+[start=3]
+. In the *terminal*, let’s run the program:
+`node myName.js`
+
+##### Part 4. Hello Darth Vadar!
+
+. Create a new variable called `lastName`.
+. Write a console.log statement that outputs, *Hello! My name is Darth Vadar!*
+
+
+
+## Summary
+
+* JavaScript is not Java
+* JavaScript was initially created in 10 days
+* JavaScript is the language of browsers.
+* JavaScript is used to add dynamic behavior to web pages and web applications.
+* JavaScript can be executed outside of a browser using NodeJS.

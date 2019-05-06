@@ -1,0 +1,286 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: JavaScript Scope
+:tags: javascript scope
+:description: An Introduction to JavaScript Scope
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+* Define 'scope' in the context of programming
+* Describe the rules of scope in Javascript
+* Describe the impact of hoisting on variable scope
+* Discuss the scoping rules for variables declared with `var`, `let`, and `const`
+
+## Introduction
+
+Understanding JavaScript scope is key to writing bulletproof code and becoming a better developer. You will understand where variables and functions are accessible, and be able to change the scope of your code’s context and be able to write more maintainable code.
+
+## What is Scope?
+
+Scope is the part of the program where a variable is bound to a memory location. 
+
+You can think of the scope as the lifetime of the variable (where in the program the variable is born and where it dies or is discarded).
+
+[TIP]
+In other words, scope is where a variable can be referenced or used.
+
+
+## Rules of Scope in JS
+
+In Javascript, there are two primary types of scope: *global* and *local* scope.
+
+* *Global* variables alive for the entire duration of the program execution.
+* *Local* variables are alive during a part of the execution of the program.
+
+To understand scope, there are a handful of principles that you should know.
+
+* Variables initially created without the `var`, `let`, or `const` keywords _are placed in the global scope_.
+* Variables created with the `var`, `let` or `const` keywords are available in the _local_ *function* scope.
+* All functions create a new local *function* scope for themselves.
+
+### Exercise - Function Scope Discussion
+
+Review the code below with a teammate and (without running the code) discuss where each variable can be accessed and used.  
+
+
+.function-scope
+[source,javascript,linenums]
+----
+const president = "Everyone knows me. Globally!";
+
+function town() {
+  const mayor = "I'm unknown outside of my township.";
+
+  function house() {
+    const homebody = "No one knows me. " +
+      "I don't leave home. " +
+      "but I know the mayor and the president.";
+  }
+
+  evilLeader = "I am evil! Want to know why?";
+}
+----
+
+### Rules of Scope Continued 
+
+Before ES2015 local variables were scoped by their enclosing `function`. ES2015 introduced a new *lexical* scope for variables declared with the `let` or `const` keywords.
+
+* Variables created with the `let` or `const` keywords are available in the _local_ *block* (and function) scope.
+
+* Blocks create a new local *block* scope for themselves.
+* The scope includes *all* outer (enclosing) scopes.
+
+### Rules of Scope TLDR
+
+* Local variables defined inside a function or block cannot be accessed from anywhere
+outside the function or block.
+* A function can access all variables and functions defined inside the scope in which it is defined. 
+
+In other words, inner scopes inherit the variables from the outer scopes, but not vice-versa.
+
+WARNING: Variables defined outside of any function are inherently global even if the `var`, `let`, or `const` keyword is used!
+
+## Examples
+
+As a class, let's step through the following examples together.
+
+### Simple
+
+A simple example might include a function that pulls in variables from it's outer scope. 
+
+.play-baseball
+[source,javascript,linenums]
+----
+favoriteSport = "Baseball"  // no var -> global
+var favoriteBaseballTeam = "Braves"; // global because not in any function
+
+function playBaseball() {
+  console.log(favoriteSport); // works, globals always in scope
+  console.log(favoriteBaseballTeam);   // works, local variable in outer scope
+
+  pitcherName    = "Brandon Kearns";
+  var batterName = "Mike Hopper";
+
+  console.log(batterName);  // works, local variable in scope
+  console.log(pitcherName); // works, globals always in scope
+}
+
+playBaseball()
+----
+
+Running this function should work as expected, because the calls to `console.log` happen inside of `playBaseball`, which has access to variables scoped both locally and globally.
+
+However, what happens when we try to all of the variables (outside of the `playBaseball` function)?
+
+.play-baseball
+[source,javascript,linenums]
+----
+// ... 
+
+console.log(favoriteSport); // <1>
+console.log(favoriteBaseballTeam);   // <2> 
+
+console.log(pitcherName); // <3>
+console.log(batterName);  // <4>
+
+console.dir(window); // <5>
+----
+
+<1> works, globals always in scope
+<2> works, local to current scope
+<3> works, globals always in scope
+<4> DOES NOT WORK, variable is in an inner scope
+<5> For good measure, log the global `window` object (`process` in node) and note how `favoriteSport` & `favoriteBaseballTeam` are properties of `window`.
+
+### More Interesting / Complex
+
+Now, let's break down a more complex example and discuss how JavaScript will interpret the code. 
+
+.JavaScript
+[source,javascript,linenums]
+----
+var firstName = 'Homer';  // <1>
+var lastName = 'Poe';   // <2>
+var age = 19; // <3>
+
+function displayPerson(fname, lname) { // <4>
+  var prefix = 'Mr.';   // <5>
+  var fullName = null; // <6>
+
+  function getFullName() { // <7>
+    var suffix = 'The First'; // <8>
+    return  fullName = prefix + ' ' + fname + ' ' + lname + ' ' + suffix;
+  }; // <9>
+
+  return getFullName();
+}; // <10>
+
+function removeYears() { // <11>
+  var minusYears = 10 // <12>
+  var age = 49;       // <12>
+  return age - minusYears;
+}; // <13>
+
+console.log(displayPerson(firstName, lastName));
+console.log(removeYears());
+----
+
+Here's how JS will parse this:
+
+<1> Found `firstName` variable declaration.
+  - Put `firstName` variable in Global Scope.
+<2> Found `lastName` variable declaration. 
+  - Put `lastName` in Global Scope.
+<3> Found `age` variable declaration. 
+  - Put `age` in Global Scope.
+<4> Found `displayPerson()` function declaration. 
+  * Notice that `displayPerson()` is a function. 
+  ** Create a inner scope and process this function. +
+  _note: a function's parameters (i.e. `fname` and `lname`) behave just like local variables_
+<5> Found the `prefix` variable declaration
+  - Place in the `displayPerson` local function scope
+<6> Found the `fullName` variable declarations. 
+  - Place in the `displayPerson()` local function scope.
+<7> Found `getFullName` declaration. 
+  * Put `getFullName` in the `displayPerson()` function scope.
+  * Notice that `getFullName` is a function. 
+    ** create an inner scope and process this function.
+<8> Found `suffix` variable declaration
+  * Place in `getFullName` local function scope
+<9> All done with `getFullName` function, no more variable declarations.
+<10> All done with `displayPerson()` function, no more variable declarations.
+<11> Found `removeYears()` function declaration. 
+  * Put `removeYears()` in Global scope.
+  * Notice that `removeYears()` value is a function. 
+  ** create a inner scope and process this function.
+<12> Found `age` and `minusYears` variable declarations. 
+  * Put these in the function's scope.
+<13> All done with `removeYears()` function, no more variable declarations
+
+#### Scope Diagram
+
+The diagram below is a visual representation of what happens for steps 1-8 of our previous example
+
+image:JS_Scope1.png[Scope 1]
+
+
+## Exercise
+
+Break up into in teams of 2, 3, or 4.
+
+Using the code sample below, discuss the scope of each variable and draw a diagram -- _similar to the example above seen above_.
+
+Feel walk around the classroom and use the whiteboard or anything else that you can write on.
+
+Once finished, compare with another team's deliverable.
+
+.JavaScript
+[source,javascript,linenums]
+----
+var autoMake = "Ford";
+var autoModel = "LTD";
+
+function showAuto(year){
+  function autoInfo(){
+    var price = 124;
+    console.log("Auto is a " + year + " " + autoMake + " " + autoModel + ", it's price is " + price + "$");
+  }
+
+  autoInfo();
+};
+
+showAuto(1969);
+----
+
+## Hoisting
+
+JavaScript will allow you to declare new variables anywhere in your code, but the declarations are *hoisted* to the top of the enclosing function (or global scope) during execution.
+
+.JavaScript
+[source,javascript,linenums]
+----
+// What we wrote
+function add(x, y) {
+  x = x || 0;
+  y = y || 0;
+  var sum = x + y;       // <1>
+  return sum;
+}
+
+// What gets executed
+function add(x, y) {
+  var sum;                // <2>
+  x = x || 0;
+  y = y || 0;
+  sum = x + y;            // <3>
+  return sum;
+}
+----
+<1> We can write the declaration and the assignment deep into the function body.
+<2> The declaration will get hoisted by the JavaScript runtime.
+<3> The assignment of a value will *not* get hoisted.
+
+
+TIP: To aid in readability, it is recommended to either declare the variables at the top of the function or to use the (new in ECMAScript 2015) block-scoped `let` and `const` keywords for declaring variables.
+
+
+## Summary
+
+* A variable or function has a *scope* that defines where the variable or function is valid -- _its lifespan_.
+* JavaScript creates *scopes* at the *function* level for `var` variables and function declarations, +
+and at the *block* level for `let` and `const` variables.
+* Scopes are *nested* according to the nesting of the functions and blocks. +
+Inner scopes can see the outer scopes they are nested within because they are still in scope.
+* Any declarations outside of a function or block are *global* -- they belong to the *global* scope.
+
+## Additional Resources
+
+* http://ryanmorr.com/understanding-scope-and-context-in-javascript/[Understanding Scope and Context in JavaScript^]
+* http://toddmotto.com/everything-you-wanted-to-know-about-javascript-scope/[Everything you wanted to know about JavaScript scope^]

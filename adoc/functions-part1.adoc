@@ -1,0 +1,280 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: Jumping into Functions
+:tags: javascript functions
+:description: An Primer on JavaScript Functions
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+*After this lesson, developers will be able to:*
+
+### Concepts
+
+* **Describe** why functions are created
+* **Explain** the single responsibility principle
+* **Explain** what makes a function _reusable_
+* **Describe** how parameters and arguments relate to functions
+* **Explain** the concept of scope and how functions affect scope
+* **Compare** global and local scope
+
+### Skills
+
+* **Create** functions in order to break programs into smaller sub-programs and include parameters if necessary
+* **Call** a function passing in data (arguments) and getting back a result
+
+## What is a function?
+
+Functions are the bread and butter of JavaScript programming. They are a tool to help us reduce repetition and have predictability around what a piece of code will do. Functions help us to structure larger programs into a bunch of smaller sub-programs.
+
+Functions also help us to define a vocabulary for a problem we are solving. This is unlike spoken language where we have more or less a fixed set of words in our vocabulary. We can create some new vocabulary to avoid repeating ourselves so much, repeating ourselves so much.
+
+NOTE: One *best practice* in software engineering is the *DRY* principle, which stands for **D**on't **R**epeat **Y**ourself. It means that we should avoid having multiple copies of a chunk of code (or data) because maintaining multiple copies is problematic. Functions is one way of avoiding duplicate code.
+
+Take the below assembly line and imagine that one of these robot arms is responsible for attaching the driver door to the car. There's a lot that goes into that: identifying the car that's passing by, choosing the correct door, lifting the door, orienting the door properly, placing it on the car, bolting it to the chassis. _Phew_. We don't want to have to "say" all of those things to our robot arm, we just want to be able to tell it `attachDriverDoor`.
+
+Imagine the assembly line below. All of these robots have _one_ job.
+
+image::js-functions-assembly-line.jpg[]
+
+We might _define_ our `attachDriverDoor` function something like this:
+
+[source,javascript,linenums]
+----
+include::../src/robot-arm.js[tags=definition]
+----
+
+where `identifyCarType`, `selectDoor`, `liftDoor`, `alignDoor` & `boltDoorToChassis` are functions that we have defined elsewhere in our program and we _invoke_ them within the `attachDriverDoor` function. The term _invoke_ simply means to _call_ the function thus causing the function to execute and perform its work.
+
+Can you guess what _invoking_ the `attachDriverDoor` function might look like?
+
+[.result]
+[source,javascript,linenums]
+----
+include::../src/robot-arm.js[tags=invocation]
+----
+
+
+### Functions are Like Math
+
+Another useful analogy is to remember what _functions_ do in mathematics.
+
+image::function_math.png[Math Functions]
+
+Given a simple function
+
+    y = f(x)
+
+if we let f(x) = x^2
+then we have:
+
+    f(2) = 4
+    f(3) = 9
+    etc.
+
+In Mathematics, functions have inputs, outputs, a name, and a definition.
+
+It is similar in Computer Science.
+
+
+## Why are Functions Important?
+
+* Keep your code **DRY** - functions allow us to encapsulate and *reuse* a block of code
+* **Abstraction** - functions allow us to define a problem and solve it in an encapsulated way
+* **Testability** - because functions are well-defined, they are easy to test for correctness
+* **Libraries** - Another form of reuse, we can use JavaScript libraries to contain functions we plan to use over and over
+
+
+## Declaring a JavaScript Function
+
+.JavaScript
+[source,javascript,linenums]
+----
+// syntax for declaring a function
+function <function_name>(parameters) {
+   <function_body>
+}
+----
+
+NOTE: We can try out this function in https://repl.it/languages/javascript[repl.it^]
+
+.JavaScript
+[source,javascript,linenums]
+----
+// function declaration 
+function square(x) { 
+  return x * x; 
+}
+ 
+// calling the function
+let y = square(3);
+console.log("y = " + y);  // will print "y = 9"
+----
+
+This is a simple example of a function but there is a lot going on:
+
+* We have defined a function with the name `square`
+* The function takes a single parameter which has the name `x`
+* The function has a body defined by `{` and `}` where the function does its work
+* The function calculates the square of x
+* The function returns the result of squaring x, which in this case is the argument `3` within the parenthasis when we call the function
+
+## Definition
+
+function:: a sequence of program instructions that perform a specific task, packaged as a unit. This unit can then be used in programs wherever that particular task should be performed.
+
+Functions provide:
+
+* Reuse
+* Abstraction
+* Testability
+
+
+.JavaScript
+[source,javascript,linenums]
+----
+// find the average of two numbers 
+function average(x, y) {
+  return (x + y) / 2; 
+}
+
+ // calling the function 
+let y = average(20, 40); 
+console.log("y = " + y);  // will print "y = 30"
+----
+
+## The Return Statement
+
+The *return* statement ends the execution of the function and (optionally) returns a value to the caller.
+
+
+.basic-return
+[source,javascript,linenums]
+----
+function plusFive(number){
+    return number + 5 // <1>
+}
+
+console.log(plusFive(10)) // <2>
+// 15
+----
+
+<1> `return` the value of whatever number is passed in + 5
+<2> print the value of the argument passed in which is: 10 + 5 
+
+
+We can also write functions that return a value based on specific conditions.
+
+.return-based-on-condition
+[source,javascript,linenums]
+----
+// calculate income tax
+function getTax(income) {
+  if (income < 50000) {
+    return income * 0.15;
+  }
+  else if (income < 100000) {
+    return income * 0.20;
+  }
+  else {
+    return income * 0.25;
+  }
+}
+
+// calling the function
+console.log("Tax on 40000 = " + getTax(40000));
+console.log("Tax on 80000 = " + getTax(80000));
+console.log("Tax on 120000 = " + getTax(120000));
+----
+
+In the above example, our function returns a value based on the condition. 
+
+[IMPORTANT]
+anything below a valid `return` statement will not be evaluated
+
+.below-return
+[source,javascript,linenums]
+----
+
+function sayHi(name){
+    return "Hi " + name // <1>
+    console.log(name)   // <2>
+}
+----
+
+<1> return a string greeting the user by name
+<2> this line will never be evaluated
+
+## When There Is No Return Statement
+
+Not all functions have a return value. Sometimes a function simply needs to perform an operation.
+
+.no-return
+[source,javascript,linenums]
+----
+function logger(value){
+    console.log("!!!!!!! " + value + " !!!!!!!") // <1>
+}
+
+logger("foo")
+// !!!!!!! foo !!!!!!!
+----
+<1> instead of returning a string, log the value with some exclamation points. 
+
+Since a function is called to perform some task, the function must either:
+
+a. *_return_* a value
+b. *_change_* the environment in some way (a side-effect)
+c. *_both_* a and b
+
+
+## Labs - Fun with Functions
+
+### Lab 1 - Fizzbuzz
+
+FizzBuzz is a classic challenge that you may have performed in other languages. 
+
+- Head over to link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/fizzBuzz[JSF FizzBuzz^] for more detailed instructions
+
+- Starter code can be found at `JavaScript-Foundations-Exercises/fizzBuzz/index.js`
+
+- The tests for this exercise can be started with `npm run test:fizzBuzz`
+
+
+### Lab 2 - Calculator Part 1
+
+- Navigate to link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/calculator[JSF Calculator^] and complete: *Part 1 -  Calculator Functions*
+
+- Please review the README for information regarding expectations and pending/active tests 
+
+- Starter code can be found at `JavaScript-Foundations-Exercises/calculator/calculator.js`
+
+- The tests can be started with `npm run test:calculator`
+
+### Lab 3 - Review with JavaScripting
+
+Complete the link:https://github.com/workshopper/javascripting[NodeSchool JavaScripting^] Exercises
+
+
+#### Instructions
+
+- Create a new directory named `javascripting` and `cd` into it
+
+- If you are using an OM Device this module should have been previously installed. So you can skip to the link:https://github.com/workshopper/javascripting#run-the-workshop[Run the workshop^] section. Otherwise you'll need to install `javascripting globally`
+
+- Start the app in your terminal by running `javascripting`
+
+- Follow the instructions for Step 1, working your way through all of the challenges.
+
+
+## Summary
+
+* *Functions* are an essential part of JavaScript
+* We can use *functions* to break up a large program into composable and reusable parts.
+* With *functions* we can *DRY* up our code.
+* A *function* should perform one specific task (the single responsibility principle).
+* Functions take *parameters* and may return a *result*.

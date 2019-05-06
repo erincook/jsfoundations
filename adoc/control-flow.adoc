@@ -1,0 +1,855 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: JavaScript Control Flow
+:tags: javascript control-flow conditionals loops
+:description: An Introduction to JavaScript Control Flow
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to Introduction to JavaScript]
+
+## Learning Objectives
+
+### Concepts
+
+* Discuss how computer programs make decisions
+* Identify and discuss boolean operators and truthiness
+
+
+### Skills
+
+* Apply different boolean operators with objects in conditional statements
+* Discuss and apply loops and iterators using conditional statements
+
+
+## What is Control Flow?
+
+image::flow-chart.png[title="Flow Chart" align="center" width="600"]
+
+Control Flow is a fundamental concept in programming that allows you to dictate how your code runs under different conditions or until a certain condition is met.
+
+## True, False, Truthy, Falsey
+
+JavaScript makes decisions based on an expression being `true` or `false` or `truthy` or `falsey`. While only boolean expressions are `true` or `false`, any expression can be evaluated as `truthy` or `falsey` which only means that a conditional block will or will not be executed.
+
+Here are some examples:
+
+[cols="1d, 3d"]
+|===
+| Expression | Value
+| true       | true
+| false      | false
+| 3 < 5      | true
+| 5 < 3      | false
+| 1          | truthy
+| 0          | falsey
+| "true"     | truthy
+| "false"    | truthy
+| "hello"    | truthy
+| ""         | falsey
+| null       | falsey
+| undefined  | falsey
+| Infinity   | truthy
+| NaN        | falsey
+| []         | truthy
+|===
+
+
+## Logical Operators
+
+Binary operators are operators that take 2 arguments, one on the left-hand side and one on the right-hand side of the operator. We have already seen the mathematical binary operators of `+`, `-`, `*`, and `/` but there are also 2 binary operators that work with booleans:
+
+* *AND*, denoted `&&`
+* *OR*, denoted `||`
+
+There is also a unary logical operator:
+
+* *NOT*, denoted `!`.
+** Two `!` are placed side-by-side in front of a boolean, the original `true` or `false` value of the boolean is returned.
+
+
+.JavaScript
+[source,javascript,linenums]
+----
+false && false   // false
+false && true    // false
+true && false    // false
+true && true     // true
+
+false || false   // false
+false || true    // true
+true || false    // true
+true || true     // true
+
+!false           // true
+!true            // false
+
+!!false          // false
+!!true           // true
+----
+
+### `!`
+
+A single `!` placed in front of a *boolean* value it will reverse the value, returning the opposite.
+
+If a single `!` is placed in front of data types other than a boolean, it will create a boolean context. So for example, the string `"abc"`, which is associated with `truthy`, will evaluate to `false`.
+
+[source, javascript]
+----
+!"abc"    // false
+!""       // true
+----
+
+So, the single `!` does two things:
+
+* Determines the values associated true/false value.
+* Returns the opposite of the associated true/false value.
+
+### `!!`
+
+Two `!!` next to each other on a value will first change the value to the boolean opposite, and then take that returned boolean value and flip it, again, to the opposite.
+
+[source, javascript]
+----
+!!"abc"    // true
+!!""       // false
+----
+
+*TLDR:* The double-`!` returns the boolean `true`/`false` association of a value.
+
+.JavaScript
+[source,javascript,linenums]
+----
+!!(1)      // true
+!!(0)      // false
+!!(-1)     // true
+!!([])     // true
+!!({})     // true
+!!(null)   // false
+!!('')     // false
+----
+
+.JavaScript
+[source,javascript,linenums]
+----
+let data = [ false, true, 0, undefined, null, '', [], {} ];
+
+for (let i = 0; i < data.length; i++) {
+  console.log('The Truthy/Falsey of ' + data[i] + ' is ' + !!data[i]);
+}
+----
+
+```
+The above code should produce the following output:
+The Truthy/Falsey of false is false
+The Truthy/Falsey of true is true
+The Truthy/Falsey of 0 is false
+The Truthy/Falsey of undefined is false
+The Truthy/Falsey of null is false
+The Truthy/Falsey of  is false
+The Truthy/Falsey of  is true
+The Truthy/Falsey of [object Object] is true
+```
+
+TIP: For more information on logical operators, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators[MDN Logical Operators^]
+
+
+## Equality Operator `==`
+
+Equality is a bit more complex. There are 2 ways in JavaScript to verify equality.
+
+When verifying equality using double equal `==`, JavaScript does a lot of the "type coercion" in the background. Like we mentioned above, if the operands have a different type (ie: the number `1` and the string `"1"`), JavaScript will try to change the type of both operands to check whether they are equal. This means that a lot of times, expressions will return equal more easily than if we were stricter about what things were equivalent. Some examples:
+
+.JavaScript
+[source,javascript,linenums]
+----
+42 == "42"; // true
+
+1 == true; // true
+----
+
+## Equality Operator `===`
+
+To avoid type coercion and measure equality more strictly, *use the triple-equals operator*. Because `===` more truly measures actual equality, we'll use this far more often when checking whether two things are, in fact, the same thing.
+
+NOTE: "Sameness" and "equality" have various definitions and can be somewhat "fuzzy". They can also differ by programming language. Because you'll often be measuring whether two things are equal, you should investigate the way this works carefully.
+
+Some examples:
+
+.JavaScript
+[source,javascript,linenums]
+----
+1 === true;           // false
+true === true;        // true
+"hello" === "hello";  // true
+123 === 123.0;        // true
+----
+
+However, there are some incidents when it does not do what we expect, for example when working with empty objects or arrays:
+
+.JavaScript
+[source,javascript,linenums]
+----
+{} === {}          // false
+[] === []          // false
+[1,7] === [1,7]    // false
+----
+
+*Explanation*
+
+The examples in the second set fail equality tests because both **object literals** and **arrays** are objects, and not just "primitive" values like strings, numbers, and booleans. Objects and arrays are complex collections of values, and when we refer to them, we're actually referencing where they live in memory. That's why we call them "reference types," while things like strings and numbers are "value types."
+
+What this means is that when we go to compare two objects or arrays with `===`, JavaScript doesn't care if they look like similar collections. It only compares whether or not they are the exact same object in memory. In each of the cases above, when checking for equality, we're actually comparing two objects that are in two different places in memory. They're not exactly "the same."
+
+
+TIP: See https://dorey.github.io/JavaScript-Equality-Table[here^] for a nice summary of how truthy and falsey work with the `==` and `===` comparison operators.
+
+### != and !==
+
+There are also `!=` and `!==` operators, which are the negative versions of `==` and `===`
+
+
+
+
+
+
+
+## Conditionals
+
+Conditionals are a way of essentially skipping over a block of code if it does not pass boolean expression.
+
+For example: `if (expr) { code }` will run the code block if the `expr` is `true` (or even `truthy`)
+
+.JavaScript
+[source,javascript,linenums]
+----
+const num = 22;
+
+if (num % 2 === 0) {
+	console.log("is even");
+}
+----
+
+You can add an `else` or even an `else if` after an `if` block:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const expr1 = true;
+const expr2 = true;
+
+if (expr1) {
+	console.log("expr1 is true!");
+} else if (expr2) {
+	console.log("expr2 is true!");
+} else {
+  console.log("nothing is true!");
+}
+----
+
+The above example will print `expr1 is true` and the `else if` is never reached. If `expr1` is `false` it would only print `expr2 is true`
+
+
+
+### Lab 1 - Working with Conditionals
+
+Using your text editor or repl.it https://www.repl.it/[repl.it^] complete the following labs
+
+
+#### Moody
+
+Write a script evaluates a user's current mood.
+
+- create a `mood` variable and store a string value
+- If `mood` is `happy`, print 'Yay me too!' to the console,
+- If `sad` print 'Aw cheer up',
+- If neither, just print 'So moody!'.
+
+
+#### Odd or Even
+
+- Create a `number` variable and store your favorite number
+- Use conditionals to check if a hardcoded number is `odd` or `even`,
+- log the (evaluated) number and the result of `odd` or `even` to the console
+
+
+#### Divisible by 2 or 3
+
+- Write a conditional to determine if `number` is divisible by `2` or  `3`
+- If divisible by 2 or 3 `console.log` the evaluated number and 2 or 3 (depending on the whether its divisible by one or both)
+
+
+### Ternary Operators
+
+Another way to write a very shorthand conditional is using the *ternary operator*, `expr1 ? expr2 : expr3 `.
+
+The following two code snippets accomplish the same thing:
+
+[cols="^.^a, ^.^a"]
+|===
+|image:conditional-setup.png[]
+|image:ternary-setup.png[]
+|===
+
+The following if statement checks to see if `x` is even or odd:
+
+.JavaScript
+[source, javascript, linenums]
+----
+if (x % 2 === 0){
+    console.log("It is even!!");
+}
+else{
+    console.log("It is odd!");
+}
+----
+
+This can be rewritten as:
+[source, javascript]
+----
+(x % 2 === 0) ? console.log("It is even!!"): console.log("It is odd!");
+----
+
+### Switch Statement
+
+This is how it works:
+
+* The switch expression is evaluated once.
+* The value of the expression is compared with the values of each case.
+* If there is a match, the associated block of code is executed.
+
+### Example
+
+The `getDay()` method returns the weekday as a number between 0 and 6. (Sunday=0, Monday=1, Tuesday=2 ..)
+
+Use the weekday number to calculate weekday name:
+
+.JavaScript
+[source,javascript,linenums]
+----
+switch (new Date().getDay()) {
+  case 0:
+    day = "Sunday";
+    break;
+  case 1:
+    day = "Monday";
+    break;
+  case 2:
+    day = "Tuesday";
+    break;
+  case 3:
+    day = "Wednesday";
+    break;
+  case 4:
+    day = "Thursday";
+    break;
+  case 5:
+    day = "Friday";
+    break;
+  case 6:
+    day = "Saturday";
+    break;
+}
+----
+
+* When the JavaScript code interpreter reaches a break keyword, it breaks out of the switch block.
+* This will stop the execution of more code and case testing inside the block.
+
+
+### Another Example
+
+The switch statement can be used for multiple branches based on a number or string:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const food = "apple";
+
+switch(food) {
+  case 'pear':
+    console.log("I like pears");
+    break;
+  case 'apple':
+    console.log("I like apples");
+    break;
+  default:
+    console.log("No favorite");
+}
+//=> I like apples
+----
+
+In this case the `switch` statement compares `food` to each of the cases (`pear` and `apple`), and evaluates the expressions beneath them if there is a match. It uses `===` to evaluate equality.
+
+The default clause is optional.
+
+
+### What is faster switch or if/else?
+
+Note that for the `if-else` structure, the variable being checked is reloaded into a register for comparison every single time. The switch-case structure loads the variable one time, and proceeds to perform the series of comparisons.
+
+Use `if` instead of switch when:
+
+* You only have one or two tests.
+* Each test compares a different expression, for example:
+
+.JavaScript
+[source,javascript,linenums]
+----
+if (x > 5) {
+  // do something
+}
+else if (y < 20) {
+  // do something different
+}
+----
+
+## Try/Catch
+
+No matter how great we are at programming, sometimes our scripts have errors. They may occur because of our mistakes, an unexpected user input, an erroneous server response and for a thousand of other reasons.
+
+Usually, a script `“dies”` (immediately stops) in case of an error, printing it to console.
+
+`try..catch` allows to “catch” errors and, instead of dying, do something more reasonable.
+
+The `try..catch` construct has two main blocks: `try`, and then `catch`:
+
+[source, javascript]
+----
+try {
+
+  // code...
+
+} catch (err) {
+
+  // error handling
+
+}
+----
+
+It works like this:
+
+1. First, the code in `try {...}` is executed.
+2. If there were no errors, then `catch(err)` is ignored: the execution reaches the end of `try` and then jumps over `catch`.
+3. If an error occurs, then `try` execution is stopped, and the control flows to the beginning of `catch(err)`. The `err` variable (can use any name for it) contains an error object with details about what’s happened.
+
+image:try-catch.png[]
+
+.Errorless Code in `try`
+[source, javascript]
+----
+try {
+    console.log('Start of try runs');                               <1>
+    let x = 10;
+    console.log('End of try runs');                                 <2>
+}
+catch(err) {
+    console.log(`Inside catch because of error ${err}`);            <3>
+}
+
+console.log("...Then the execution continues");
+----
+Output:
+----
+Start of try runs
+End of try runs
+...Then the execution continues
+----
+
+<1> executed without any problems
+<2> executed without any problems
+<3> is not, since there were not any errors to catch.
+
+.Error in Code in `try`
+[source, javascript]
+----
+try {
+    console.log('Start of try runs');                               <1>
+    console.log(x);
+    console.log('End of try runs');                                 <2>
+}
+catch(err) {
+    console.log(`Inside catch because of error ${err}`);            <3>
+}
+
+console.log("...Then the execution continues");
+----
+Output:
+----
+Start of try runs
+Inside catch because of error ReferenceError: x is not defined
+...Then the execution continues
+----
+<1> was successfully executed.
+
+<2> is not executed because of the error in `console.log(x)` made the code immediately "jump" to the `catch`.
+<3> is executed, printing off the error that was returned.
+
+
+[NOTE]
+====
+`try..catch` only works for runtime errors
+For `try..catch` to work, the code must be runnable. In other words, it should be valid JavaScript.
+
+It won’t work if the code is syntactically wrong, for instance it has unmatched curly braces:
+
+[source, javascript]
+----
+try {
+  {{{{{{{{{{{{
+} catch(e) {
+  console.log("The engine can't understand this code, it's invalid");
+}
+----
+
+The JavaScript engine first reads the code, and then runs it. The errors that occur on the reading phrase are called “parse-time” errors and are unrecoverable (from inside that code). That’s because the engine can’t understand the code.
+
+So, `try..catch` can only handle errors that occur in the valid code. Such errors are called “runtime errors” or, sometimes, “exceptions”.
+
+====
+
+### Error Object
+When an error occurs, JavaScript generates an object containing the details about it. The object is then passed as an argument to `catch` in the line `catch(err)`. For all built-in errors, the error object inside `catch` block has two main properties:
+
+[cols="^.^, <.^3a", width="90%"]
+|===
+|`name`
+|Error name.
+
+Example: For an undefined variable that’s `"ReferenceError"`.
+
+|`message`
+|Textual message about error details.
+|===
+
+
+.Using Error's Properties
+[source, javascript]
+----
+try {
+    console.log('Start of try runs');
+    console.log(x);
+    console.log('End of try runs');
+}
+catch(err) {
+    console.log(`Error Name: ${err.name}`);
+    console.log(`Error Message: ${err.message}`);
+}
+
+console.log("...Then the execution continues");
+----
+Output:
+----
+Start of try runs
+Error Name: ReferenceError
+Error Message: x is not defined
+...Then the execution continues
+----
+
+.Error Types
+[cols="^.^,<.^2,3a"]
+|===
+|Error Type
+|Description
+|Example
+
+|`Error`
+|Generic Error Object
+|
+
+|`SyntaxError`
+|Raised when a syntax error occurs while parsing JavaScript code.
+|[source, javascript]
+----
+let age = -100;
+if(age > 0){
+    console.log(age);
+ //No closing }
+----
+
+|`ReferenceError`
+|Raised when an invalid reference is used.
+|[source, javascript]
+----
+ //age is not defined
+if(age > 0) {
+    console.log(age);
+}
+----
+
+|`TypeError`
+|Raised when the type of a variable is not as expected.
+|[source, javascript]
+----
+var num = 1;
+console.log(num.toUpperCase());  // There is no toUpperCase method for Numbers
+----
+
+|`RangeError`
+|Raised when a numeric variable exceeds its allowed range.
+|[source, javascript]
+----
+ //rounding to x num of decimal places
+77.1234.toFixed(-1); // You can't round to -1 num of decimal places!
+----
+|===
+
+link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors[More error types list here!]
+
+### Throwing User Defined Errors
+
+What if code is syntactically correct, but is not logically what is wanted? For example, you want a user's age, so you do not want any negative numbers. If a negative number is given, you want an error raised. *YOU* know that, but does JavaScript?
+
+[source, javascript]
+----
+try {
+    let age = -100;
+    console.log(`Your age is: ${age}`);
+}
+catch(err) {
+    console.log(`Received a ${err.name}, with the message: ${err.message}`);
+}
+
+console.log("...Then the execution continues");
+----
+Output:
+----
+Your age is: -100
+...Then the execution continues
+----
+
+Notice, the code ran without any syntax error. To generate an error if there are any negative ages, you will need to `throw` one yourself.
+
+The syntax is: `throw <error object>`
+
+Technically, we can use anything as an error object. That may be even a primitive, like a number or a string, but it’s better to use objects, preferrably with `name` and `message` properties (to stay somewhat compatible with built-in errors).
+
+In our case, the placement of a negative age could be treated as a `RangeError`.
+
+[source, python]
+----
+try {
+    let age = -100;
+    if(age < 0){
+        throw new RangeError("Invalid age: no negatives");                    <1>
+    }
+    console.log(`Your age is: ${age}`);
+}
+catch(err) {
+    console.log(`Received a ${err.name}, with the message: ${err.message}`);
+}
+
+console.log("...Then the execution continues");
+----
+
+<1> The `throw` operator generates a `RangeError` with the given `message`, the same way as JavaScript would generate it itself. The execution of `try` immediately stops and the control flow jumps into `catch`.
+
+Output:
+----
+Received a RangeError, with the message: Invalid age: no negatives
+...Then the execution continues
+----
+
+
+## Iteration
+
+It is a way of incrementally repeating a task. Iterating is a way of describing procedures like
+
+    print "hello world" 50 times
+
+It is also a way of describing
+
+    print each item in a shopping list
+
+It can also be a way of solving problems like
+
+    how would I print all vegetables in a shopping list?
+
+[TIP]
+Writing programs and applications often calls for code to be repeated multiple times.
+
+Typically iteration has three or four main parts
+
+* an `initial state` - runs once at the beginning of the iterations
+* a `condition`- runs before each iteration (repeats), if it is `falsey` then the for loop ends
+* a `state change` - runs after each iteration (before proceeding to the next step)
+* a process to be run for each repetition
+
+The primary means of iterating in most languages is called a `for` loop, which has the following structure
+
+.JavaScript
+[source,javascript,linenums]
+----
+for (initial state; check condition; change state) {
+	// run this code for before changing state
+}
+----
+
+[NOTE]
+There are always 2 semicolons in the for loop iteration expression.
+
+or a  more concrete example
+
+[source,javascript,linenums]
+----
+for (let i = 0; i <= 9; i ++) {
+    console.log( i );
+}
+----
+
+.JavaScript
+[source,javascript,linenums]
+----
+let friends = ["larry", "moe", "curly"];
+
+for (let index = 0; index < friends.length; index = index + 1) {
+	console.log(friends[index])
+}
+----
+
+### LAB 2 - 99 Bottles (of delicious cold brewed coffee)
+
+. Using a `for` loop.
+. Write a simple version of "99 bottles of cold brewed coffee on the wall" +
+(note: make sure you're logging the result to the console)
+. Once you get the program running, log "We're out of coffee!" to the console when your counter hits 0
+
+
+## While loops
+
+The while loop is the other type of repetitive control flow structure. However, `for` handled most of the general iteration tasks we could hope to perform. You should hardly ever need just a `while` loop. It will run so long as a condition is true.
+
+
+.JavaScript
+[source,javascript,linenums]
+----
+while (expression) {
+  // do something
+}
+----
+
+A practical example could be...
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 0;
+while(x < 10) {
+	x = x + 1;
+  console.log(x);
+}
+console.log("Final x value: " + x);
+----
+Output:
+----
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Final x value: 10
+----
+
+
+
+
+### Lab 3 - 99 Bottles Revisited
+-  Re-write exercise `99 bottles` using a `while` loop.
+
+
+## do...while
+
+The `do...while` statement, which is very similar to `while` with the major difference being that a `do...while` loop will always execute once, *even if the condition is never true*.
+
+A while loop would not execute anything from the body if the condition was `false`. To test this, set a variable to `0`, increment it inside the `do` statement, and set the condition to `false`.
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 0;
+
+while (false) {
+    x++;
+    console.log(x);
+}
+----
+There would be no output.
+
+
+In a do while loop, the body is executed at least once.
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 0;
+
+do {
+    x++;
+    console.log(x);
+} while (false);
+----
+Output: `1`
+
+
+## Infinite Loops
+
+* While writing a loop it is possible to create a loop that will go on forever. This is called an *infinite* loop.
+* Obviously we try to avoid infinite loops.
+
+
+.JavaScript
+[source,javascript,linenums]
+----
+for (let i = 0; i > 0; i++) {
+  console.log(i);
+}
+----
+
+
+## For ... Of & For ... In
+
+Two additional options for iterating over collections of data are the `for...of` and `for...in` loops.
+
+`for...of` allows iteration of strings and arrays (we'll cover arrays shortly!)
+
+
+[source,javascript,linenums]
+.String-Iteration
+----
+let iterable = 'hello!';
+
+for (let value of iterable) {
+  console.log(value);
+}
+
+// h
+// e
+// l
+// l
+// o
+// !
+----
+
+The `for... in` loop gives us a way to iterate through an object.
+
+To learn more about these loops check out:
+
+- link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for\...of[for...of^]
+- link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for\...in[for...in^]
+
+## Lab 4 - Rock Paper Scissors
+
+Work in pairs to link:rock-paper-scissors-lab.html[create a game of Rock Paper Scissors^]
+
+image:rps.gif[]
+
+## Summary
+
+Control flow allows you (the engineer) to control how your application operates based on specific conditions. Understanding conditionals and iteration is the first step in making robust interactive applications.
+
+## Additional Resources
+
+* link:https://javascript.info/try-catch[Try Catch Examples]

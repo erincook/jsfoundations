@@ -1,0 +1,140 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+SE Fundamentals
+:lesson-title: JavaScript Foundations
+:tags: javascript
+:description: A course on core JavaScript
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+## Lessons in this Series
+
+### Intro to Programming with JavaScript
+
+****
+icon:eye homedepotorange[]
+
+====
+
+link:intro.html[Introduction to JavaScript^]
+
+link:expressions-and-data-types.html[Expressions And Data Types^]
+
+link:control-flow.html[Control Flow^]
+
+link:arrays-and-loops.html[Arrays and Loops^]
+====
+
+****
+
+### Objects and Functions
+
+****
+icon:eye homedepotorange[]
+
+====
+
+link:objects-and-json.html[Objects and JSON^]
+
+link:functions-part1.html[Jumping into Functions^]
+
+====
+****
+
+### Getting Functional
+
+****
+icon:eye homedepotorange[]
+
+====
+
+link:modern-array-methods.html[Modern Array Methods^]
+
+link:functions-part2.html[Function Deep Dive^]
+
+link:scope.html[Scope^]
+
+link:closures.html[Closures^]
+====
+****
+
+### JS has no class - Object Orientation & what is `this` ?
+
+****
+icon:eye homedepotorange[]
+
+====
+
+link:context.html[Context^]
+
+link:oop.html[Object Orientation in JavaScript^]
+
+link:es6-classes.html[ES6 Classes^]
+
+====
+
+****
+
+### JS in the real world with Promises, Node Packages, Classes & Modules
+
+****
+icon:eye homedepotorange[]
+
+====
+
+link:promises.html[Working With Promises^]
+
+link:npm-packages-and-modules.html[npm, yarn and ES6 Modules^]
+
+====
+****
+
+## JavaScript Exercises
+****
+icon:user homedepotorange[]
+
+====
+
+link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises[JS Foundations Exercises]
+
+link:rock-paper-scissors-lab.html[LAB: Rock Paper Scissors^]
+
+link:shopping-cart-lab.html[LAB: Shopping Cart^]
+
+link:email-client-lab.html[LAB: Build an Email Client^]
+
+link:https://github.com/workshopper/scope-chains-closures[LAB: Nodeschool Scope & Closure^]
+
+link:https://github.com/sporto/planetproto[LAB: NodeSchool Planetproto^]
+
+====
+
+****
+
+
+## Kahoots
+
+****
+
+icon:users homedepotorange[]
+
+====
+
+link:https://kahoot.it[Kahoot It!]
+
+====
+
+****
+
+## Resources
+
+****
+
+====
+
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript[A Re-introduction to JavaScript^]
+
+
+====
+
+****

@@ -1,0 +1,53 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: LAB - Rock Paper Scissors
+:tags: javascript lab rps
+:description: Pair with a teammate to create a game of Rock Paper Scissors that runs until one player has three wins
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+## Instructions
+
+### Players
+
+* Create 2 players and store the following data as variables
+** player's name
+** number of wins (score) for each player
+
+### Randomly Select an item
+* Use the code below to randomly select an item for each player
+
+[source, javascript]
+----
+const options = ['rock' , 'paper', 'scissors'];
+
+let selection = options[parseInt(Math.random() * options.length)];
+----
+
+### Gameplay
+
+* Implement the logic for a second player to make a selection
+* Print each player's hand to the console
+* Use an `if` or `switch` statement to determine a winner
+* Increment the winner's score
+* Output the winner's name and score to the console
+
+### Advanced Gameplay
+
+Once you have that working...
+
+* Use a `while` loop to run the game until one player has 3 wins
+* Create a way to track how many rounds each player has won
+* When one player wins 3 rounds, announce that player's name as the game winner and end the game.
+
+## Possible Outcomes
+
+Below you will find all possible options for a winning hand.
+
+image:rockpaper_web.jpg[image]
+
+
+## Extra Credit
+
+Using the Chrome Developer tools or repl.it, Make one of the players interactive.

@@ -1,0 +1,33 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: LAB - Shopping Cart
+:tags: javascript lab arrays
+:description: Imagine you are going to the grocery store and you want to use an array to keep track of your shopping list.
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+## Setup
+
+Setup instructions and exercise starter code can be found at link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/arrays-exercises[Array Exercises^]
+
+## Working with your list
+. Create an array to represent your shopping list with the following items:
+.. pizza
+.. ramen noodles
+.. chips
+.. salsa
+.. coffee
+. Add _apples_ to the list.
+. Update _coffee_ to _single origin coffee_
+. Replace _chips_ and _salsa_ with _rice_ and _beans_
+
+## Working with your shopping cart
+. Create an empty array to represent your shopping cart.
+. Remove the last item from your shopping list and add it to your cart
+. Remove the first item from your shopping list and add it to the cart
+. Sort the items in your cart alphabetically... backwards
+. Print the list of items in your shopping cart to the console as comma separated string.
+
+
+_Feel free to use link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array[Mozilla's JS Array Documentation] for reference_

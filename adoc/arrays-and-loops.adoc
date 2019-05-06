@@ -1,0 +1,478 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: Arrays and Loops
+:tags: javascript arrays loops
+:description: An Introduction to JavaScript Arrays and Loops
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+* Explain the advantages of using Arrays
+* Compare the classic `for` loop with the newer `forEach` loop
+
+### Skills
+
+* Declare an Array in JavaScript
+* Access elements in an Array
+* Use `push` and `pop` to add and remove elements from an Array
+* Use `shift` and `unshift` to add and remove elements from an Array
+* Use `splice` and `slice` to access and manipulate sections of an Array
+* Use the classic `for` loop to iterate through the elements in an Array
+* Use the newer `forEach` loop to iterate through the elements in an Array
+
+## Encapsulation
+
+We often have a *lot* of moving parts in a program. We want to organize these parts into logical building blocks.
+
+An _array_ is a simple way of _encapsulating_ a collection of values into a single _object_.
+
+Think of an array as a container that holds multiple values
+
+
+## Declaring Arrays
+
+There are several ways to instantiate (create) an array.
+
+[source,javascript,linenums]
+.JavaScript
+----
+const colors = [];   						<1>
+const colors = new Array();  				<2>
+const colors = ['red', 'green', 'blue'];    <3>
+----
+
+<1> most common way to create an array
+<2> alternative syntax for creating a new array using a constructor
+<3> creating an array with contents
+
+## Accessing Data in an Array
+
+Given that arrays are containers of data, we often want to look into the array and get specific items out of it.
+
+
+[source,javascript,linenums]
+.JavaScript
+----
+const colors = ['red', 'green', 'blue'];    <1>
+const roy = colors[0];                    	<2>
+const gee = colors[1];                   	<3>
+const biv = colors[2];                    	<4>
+----
+
+<1> create an array of colors
+<2> roy === red
+<3> gee === green
+<4> biv === blue
+
+
+
+[NOTE]
+In most modern programming languages, including JavaScript, arrays are indexed starting with zero!
+
+
+## Modifying Arrays
+
+* `push()` adds at end;
+* `pop()` deletes from end.
+* `unshift()` adds to front;
+* `shift()` deletes from front.
+* `splice()` adds and removes array items at any position
+
+[source,javascript,linenums]
+.JavaScript
+----
+colors.push('yellow');          <1>
+colors.pop();                   <2>
+colors.unshift('purple');       <3>
+colors.shift();                 <4>
+colors.splice(1, 2, 'purple');  <5>
+----
+
+<1> Add `yellow` to the end of the array
+<2> Removes the last item from the **end** of the array
+<3> Adds to the **beginning** of the array
+<4> Removes the first item from the **beginning** of the array
+<5> Starting at index `1`, remove `2` items and insert `purple`
+
+Here is the syntax for using `splice`:
+
+    splice(index, howmany, item1, ....., itemX)
+
+**Where:**
+
+* `index`: Required. This must be an integer that specifies at what position to add/remove items. Use negative values to specify the position from the end of the array.
+* `howmany`: Required. The number of items to be removed. If set to 0, no items will be removed.
+* `item1, ..., itemX`: Optional. The new item(s) to be added to the array at `index`
+
+`splice()` returns an array of the items that were removed.
+
+'''
+
+.Unshifting/Shifting Example
+
+One of the original metaphors used to analyze arrays is a stack of plates in a cafeteria. When you put another plate on the top (front), this is the equivalent to *"unshifting"* the stack. When a plate is taken away (front), this is the equivalent to *"shifting"* the stack.
+
+image:plate-metaphor.png[]
+
+.Push/Pop Example
+Suppose you have a train of carts full of goods and a single siding for switching.
+
+To reverse the order of the trains, you *push* each cart into the siding in the order 1,2,3 and then *pop* them out of the siding in the order 3,2,1.
+
+image:trains.png[500, 333]
+
+## Summary of Array Methods
+
+
+The Array Prototype gives us quite a few built in methods for operating on arrays.
+
+These methods give use the ability to:
+
+- modify (mutate) the original array
+- perform a one-time operation with data inside the array
+- get specific information about the array
+- create a modified copy of the array
+
+### Methods that Mutate
+
+The methods we've already reviewed, all modify the original array permanently. A few more method s that fall into this category are:
+
+[source,javascript,linenums]
+----
+let array = [1, 2, 3];
+
+array.reverse();      // Reverses the order of the elements of an array
+array.sort();         // Sorts the elements of an array in place and returns the array.
+----
+Let's take a look at these methods in action
+
+[source, javascript, linenums]
+.sort & reverse
+----
+let myArray = [2, 1, 3]
+
+myArray.sort();
+console.log(myArray) // [1,2,3]
+
+myArray.reverse();
+console.log(myArray) // [3,2,1]
+----
+
+In the above scenario, each method permanently changes `myArray`.
+
+### Methods that Clone
+
+We also have methods that will iterate over an array, make changes and produce a new array. Some of the more popular methods in this category include:
+
+array.slice(start, end);        // Extracts a section of an array and returns a new array.
+array.concat(arr1, arr2);       // Combines 2 arrays and returns the new array.
+array.filter();       // Takes a condition and returns all truthy values in a new array.
+array.map();          // Map each value to a new value using the provided callback.
+
+[source,javascript,linenums]
+----
+let array = [1,2,3,4];
+
+mySlice = array.slice(1,3);  // [2,3]
+myBiggerSlice = array.slice(1); // [2,3,4]
+
+let arr1 = ['abc', 'def'];
+let arr2 = ['123', '456'];
+let both = arr1.concat(arr2); //[ 'abc', 'def', '123', '456' ]
+
+var ages = [32, 6, 13, 45];
+var adults = ages.filter(function(age){
+    return age >= 18;
+}; // [32, 45]
+
+var numbers = [4, 9, 16];
+var sqroots = numbers.map(Math.sqrt); // [2, 3, 4]
+----
+
+We'll cover these types of array methods a little later in this course.
+
+### Getting Info
+
+Some array methods simply give us information about our array. Such methods include:
+
+
+[source,javascript,linenums]
+----
+let array = [1, 2, 3];
+
+array.indexOf();      // Locates the index of a specific array item.
+array.every();        // tests that all elements in the array match a condition.
+array.some();         // tests that at least one element in the array matches a condition
+----
+
+This can be useful for determining how you want your program to operate (control-flow) as well as determining if an array has the expected data.
+
+Can you think any other use cases?
+
+### One-time Operations
+
+Other methods perform a one-time operation on the array. Some of the popular options include:
+
+[source,javascript,linenums]
+----
+let array = [1, 2, 3];
+
+array.join();         // Joins all elements of an array into a string.
+array.toString();     // Converts an array into a string.
+----
+
+Let's review an example of these methods in use.
+
+[source, javascript, linenums]
+----
+teachers = ['Brandon', 'Shane', 'Mike'];
+teachers.toString(); // 'Brandon,Shane,Mike';
+teachers.join(' & '); //'Brandon & Shane & Mike';
+----
+
+
+### Mastering Array Methods
+
+The best way to familiarize yourself with arrays methods is to try them out whenever you are trying to solve a problem. Throughout this course you'll have an opportunity to work with several of the methods we've been discussing.
+
+---
+[TIP]
+The above examples are just a slice of the Array Methods available to us. Check out link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array[MDN's Documentation on Arrays] for additional details and examples.
+
+## Iterating over Arrays
+There are 2 ways to iterate over an array:
+
+### The Classic `for` Loop
+
+[source,javascript,linenums]
+.JavaScript
+----
+const fruit = ['Apple', 'Orange', 'Banana'];
+
+for (let i=0; i < fruit.length; i++) {
+  console.log(fruit[i]);
+}
+----
+
+As you can see, here we are using `fruit.length` (the length of the array) as our value to test against.
+
+### The `forEach` Loop
+
+Another way of iterating over an array that was added with ECMAScript 5 is https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach[`forEach()`^]:
+
+[source,javascript,linenums]
+.JavaScript
+----
+const fruit = ['Apple', 'Orange', 'Banana'];
+
+fruit.forEach(function(item) {
+  console.log(item);
+});
+----
+
+.JavaScript
+[source,javascript,linenums]
+----
+["dog", "cat", "hen"].forEach(function(currentValue, index, array) {
+   console.log("I want a ", currentValue);
+   console.log(array[index]);
+});
+----
+
+in JavaScript `forEach` is often preferred as it is more declarative. Meaning that you trust your `forEach` method to handle the details, you simply declare what you want to accomplish on each iteration.
+
+## Labs
+
+Pair up and trade driver/navigator on each set of exercises found below.
+
+### Getting Started
+
+You'll find a detailed set of instructions in the link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises#getting-started[Getting Started Section] of the JavaScript Foundations Exercises Repo.
+
+Many of the exercises for this workshop can be found in the above repo. You'll need to clone down the repo and run the initial setup steps before moving on the to labs.
+
+Take a few minutes and walk through the setup steps. Once you have your environment properly configured move on the the Array Warm Ups Lab. Please don't hesitate to reach out to the instructors for assistance.
+
+#### JS Foundations Lab Setup - TLDR;
+
+##### Initial Setup
+
+* Clone the repo by running `git clone https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises.git`
+* `cd` into `JavaScript-Foundations-Exercises`
+* Run `sh ./setup.sh`
+
+Once you've run these steps open the project in your favorite text editor (VS Code, VIM, whatevs)
+
+[NOTE]
+The setup only needs to be run once
+
+##### Accessing the Lab Environment
+
+* `js-labs-start` starts the lab environment
+  ** run after setup
+  ** run after reboot
+  ** run after manually shutting down the lab environment
+* `js-labs-login` logs in to the lab environment
+  ** run anytime you want to access the lab environment
+* Run `npm install` to ensure all your dependencies are installed
+  ** typically only needs to be run once
+
+[IMPORTANT]
+please ensure that Docker is running on your computer
+
+##### Instructions
+
+Once you've logged in, you can print the instructions for any exercise.
+
+* `npm run instructions` will give you a list of exercises/labs to choose from
+  ** Select the exercise you want to complete and review the instructions
+  ** Additional info for running the test suite will be included at the end of each set of instructions
+* The instructions can also be found in each exercise directory
+* Where to find the starter code will also be included in the instructions
+
+[TIP]
+Instructions can be reviewed at anytime with the `npm run instructions` command
+
+
+##### Running the Tests
+
+* Tests can be run for individual assignments by running `npm run test:<assignment-name>` +
+for example:
+  ** `npm run test:arrayWarmUp` will run only the Array Warm Up tests
+  ** `npm run test:shoppingCart` will run only the Shopping Cart Tests
+* All tests can be started with `npm run test`
+
+_note: these tests are being run inside of a Docker container named `js-labs`._
+
+##### Verify and Celebrate
+
+At this point you should be able to:
+
+- login to the lab environment
+- print the instructions
+- run the test suites
+
+Take a moment to verify things work as expected, and then celebrate.
+
+image::office-dance.gif[]
+
+Now, you can move on the the exercises.
+
+### Array Warm Up
+
+* Print a list of instructions with `npm run instructions`
+** Select `Arrays` from the list
+** Select `01 Array Warm Up` from the list
+* Open `arrays/arrayWarmUp.js` in your text editor
+* Run the tests with `npm run test:shoppingCart`
+* Write the code to make your tests pass
+
+Instructions can also be found at link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/arrays#part-1-array-warm-up-exercises[Array Warmup Exercises^]
+
+### Shopping Cart
+
+* Use the above steps replacing _Array Warm Up_ with _Shopping Cart_
+* Instructions can also be found at link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/arrays#part-2-shopping-cart[Shopping Cart Exercise^]
+
+
+### Sum Numbers (the `for` loop version)
+
+* Repeating the above steps, complete the link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/arrays-exercises#part-3-sum-numbers[Sum Numbers Exercise^] by summing an array of numbers with a `for` or `forEach` loop
+
+
+### Multi-Dimensional Arrays
+
+* Using the repl.it below, iterate through a list of shopping lists and print each item in each list.
+
+pass:[<iframe height="500px" width="100%" src="https://repl.it/@shanebarringer/shoppingListsExercise?lite=true" scrolling="no" frameborder="no" allowtransparency="true" allowfullscreen="true" sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals"></iframe>]
+
+
+## Summary
+
+### Arrays
+
+* We can use `arrays` to store several values inside a single variable.
+* Arrays store values in a specific order.
+* The values inside an array are indexed starting with an index of zero.
+* We can add values to an `array` using `push` and `unshift`.
+* We can remove values from an `array` using `pop` and `shift`.
+* We can also use `splice` to add and/or remove values in an array.
+
+### Loops
+* We can use the classic `for` loop to *iterate* over an array and process the values.
+* We can use the newer `forEach` loop to *iterate* over an array without caring about the index.
+
+
+## Additional Resources
+
+* http://stackoverflow.com/questions/9329446/for-each-over-an-array-in-javascript[How to iterate over an array^]
+* https://www.w3schools.com/js/js_arrays.asp[W3 Schools - JavaScript Arrays^]
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array[MDN - JavaScript Arrays^]
+* https://www.w3schools.com/jsref/jsref_forEach.asp[W3 Schools - JavaScript Array forEach Method^]
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach[MDN - JavaScript Array forEach Method^]
+* https://www.i-programmer.info/babbages-bag/263-stacks.html[Example for LIFO]
+
+
+// ### Additional Exercises
+
+// . Word counting:
+// .. Count the number of space separated words in the string below (Hint: do this with and without a `for` loop.).
+// .. Count the number of words that in a string that have the letter `a` in them.
+// +
+// .JavaScript
+// [source,javascript,linenums]
+// ----
+// let shakespeare = "Our doubts are traitors, and make us lose the good we oft might win, by fearing to attempt."
+// ----
+
+// . Capitalize the first letter in every word in a string, i.e
+// +
+// .JavaScript
+// [source,javascript,linenums]
+// ----
+// "hello world" => "Hello World"
+// ----
+
+// . Find the largest and smallest number in the array below.
+// +
+// .JavaScript
+// [source,javascript,linenums]
+// ----
+// const numbers = [ 56, 74, 31, 89, 8,
+//       					22, 5, 19, 28, 100,
+//       					82, 72, 39, 25, 90,
+//       					1, 97, 83, 58, 38,
+//       					57, 71, 70, 7, 3,
+//       					12, 48, 45, 43, 84,
+//       					68, 49, 37, 41, 92,
+//       					96, 6, 66, 95, 15,
+//       					67, 2, 59, 4, 91,
+//       					44, 50, 17, 30, 88,
+//       					34, 55, 64, 9, 27,
+//       					73, 60, 32, 81, 10,
+//       					53, 61, 63, 51, 65,
+//       					36, 26, 99, 76, 47,
+//       					21, 14, 16, 40, 79,
+//       					75, 85, 42, 86, 18,
+//       					23, 24, 46, 69, 29,
+//       					77, 20, 54, 80, 87,
+//       					13, 94, 98, 93, 62,
+//       					35, 33, 11, 52
+//               ];
+// ----
+
+// . You have a list of numbers in the `numbers` array above somehow got shuffled and one is missing. Luckily you know that the numbers were from `1 to 100`. Find the missing number.
+
+// . Find the `sum` of the values in an array and the `average` in the `numbers` array above.
+
+// . Find the average of only the odd numbers the `numbers` array above.
+
+// . Write a loop that creates an array of `100` random integers (not decimal numbers).
+
+// . Find the numbers in common in two different lists of numbers.

@@ -1,0 +1,276 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OrangeMethod"]
+The Server Side
+:lesson-title: Async/Await
+:tags: async await
+:description: An introduction to Async/Await
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+## Learning Objectives
+
+.Concepts
+****
+====
+- When and where to use `async / await`
+
+- When not to use `async / await`
+
+- Handling errors with `try / catch`
+====
+****
+
+.Skills
+****
+====
+- Refactor asynchronous code to read like synchronous code using `async / await`
+
+- Handle errors using `try / catch`
+====
+****
+
+## Understanding The Problem
+
+.Callbacks&mdash;code you don't look forward to seeing.
+****
+Async operations require some form of a callback to handle the data once it is available
+====
+Javascript *callbacks* allow us to write asynchronous code, 
+but we have seen the horror of link:promises.html#problems_with_callbacks[Callback Hell]. Additionally, it can be excrutiatingly difficult to write code for parallel execution with callbacks.
+
+We have learned to use link:promises.html[Promises] which to help solve the problem of messy asynchronous code. Promises are syntactic sugar around callbacks.
+Provide objects that manage the status of the async operation ('pending', 'resolved', or 'rejected'). Promises help us write programs for parallel or sequential execution by facilitating the combination of multiple async operations while and mitigating callback hell. A couple more reasons we should be using promises, include better error-handling and wide adoption on both *client* and *server* JavaScript development.
+====
+****
+
+.The Promised Land is not found in promises.
+****
+====
+Promises are still not as readable as synchronous code. 
+Even when we chain promises together, 
+the sequential appearance cannot hide the fact that promises still pass callbacks inside `.then`. 
+
+Promises may keep us out of classic link:promises.html#problems_with_callbacks[Callback Hell], 
+but where we end up _surely_ won't be asynchronous heaven.
+====
+****
+
+## The new JavaScript `async / await` Keywords
+
+ES-2017 gives us a new way to deal with asynchronous execution. Instead of using callbacks or promises, we can now use the `async` and `await` keywords.
+
+NOTE: NodeJS version 8 now has full support for `async / await`.
+
+##### async function f()
+
+Here is how it works:
+
+* `async` and `await` are simply promises in disguise (but what a beautiful disguise it is)
+* We use the `async` keyword to declare that a function contains asynchronous operations
+* We can then use `await` keywords inside the `async` function to essentially block until the async operation completes.
+
+You can think of `await` as a really short way of saying `promise.then()`.
+
+Here are some examples:
+
+.async-await-simple-refactor.js
+[source,javascript,linenums]
+----
+// function returns a promise object
+const promise1 = () => {
+  return new Promise(resolve => resolve);   // <1>
+}
+
+/* refactor to use async keyword,
+   async function that returns a promise */
+const promise2 = async () => {
+  return Promise;                           // <2> 
+}
+----
+1> `promise1` returns 'pending'
+2> `promise2` returns 'resolved'
+
+.async-await-clock.js
+[source,javascript,linenums]
+----
+const clock = {position: { seconds: 0, minutes: 0}}   // <1>
+
+// we can combine a for loop with async / await
+
+// 
+const timer = (milliseconds) => {   // <2>
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+let move = async (clock) => {   // <3>
+      for (let i = 1; i < 30; i++) {   
+        clock.position.seconds = i + ' seconds';
+        console.log("Clock timer = ", clock.position.seconds);
+        await timer(1000);  
+    }                                                        
+  console.log("Blocking THIS line of code until the for loop completes"); // <4>
+}
+
+move(clock);
+
+----
+1> Declare `clock` global variable.
+2> Declare a `timer` utility which returns a 'pending' promise.
+3> Declare our `async` function. 
+4> This line demonstrates the blocking nature of `async / await`
+
+
+.async-get-user-followers.js
+[source,javascript,linenums]
+----
+async function getUserFollowers() {
+  let user = await fetchJSON('/users/me');                     // <1>
+  let followerIDs = await fetchJSON(`/followers/${user.id}`);  // <2>
+  let promises = followerIDs.map((id) => {                     // <3>
+    return fetchJSON(`/users/${id}`);
+  });
+  let followers = await Promise.all(promises);   // <4>
+  console.log(followers);
+}
+
+let promise = getUserFollowers();    // <5>
+----
+1> We get our `user`.
+2> Fetch our followers.
+3> Map over our followers and create an array of promises.
+4> `await Promise.all(promises)` resolves all of the promises in the array.
+5> The `async` keyword precedes `getUserFollowers`, so `getUserFollowers` returns a promise.
+
+
+.async-get-answer.js
+[source,javascript,linenums]
+----
+const utils = require('./utils');
+
+// let's setup a function that returns a promise and resolves it in the future.
+function getAnswer() {
+  return new Promise( (resolve, reject) => {
+    utils.delay( () => resolve(42), 2000 );
+  });
+}
+
+// if you have any async code, declare the function containing your async code with the `async` keyword
+// const getAnswerToEverything = async () => {
+async function getAnswerToEverything() {
+  // use `await` to signify that we should wait for the async code to complete (resolves the promise)
+  console.log('getting the answer...');
+  const answer = getAnswer();
+  console.log(`The answer is ${await answer}.`);
+};
+
+getAnswerToEverything();
+console.log('We are done.');
+----
+
+.async-math.js
+[source,javascript,linenums]
+----
+function resolveAfter2Seconds(x) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(x);
+    }, 2000);
+  });
+};
+
+(async function(x) {     // async function expression used as an IIFE
+  const a = resolveAfter2Seconds(20);
+  const b = resolveAfter2Seconds(30);
+  return x + await a + await b;       // a and be are processed concurrently
+})(10).then(v => {
+  console.log(v);  // prints 60 after 2 seconds (concurrent execution).
+});
+
+const add = async function(x) {     // async function expression assigned to a variable
+  const a = await resolveAfter2Seconds(20);  // await causes blocking
+  const b = await resolveAfter2Seconds(30);  // b is processes after a is resolved (sequentially)
+  return x + a + b;
+};
+
+add(10).then(v => {
+  console.log(v);  // prints 60 after 4 seconds (sequential execution).
+});
+----
+
+### Advantages of `async` / `await`
+
+. Concise and clean code
+. Easier inter-promise dependencies - no more nesting to handle sequential dependencies between 3 or more promises.
+. Better Error handling - we can use the classic `try` / `catch` blocks instead of the Promise specific `.catch(err)`.
+
+### `async` error handling with `try / catch`
+A simple way to handle errors with `async / await` is to wrap the code in a `try` block and use `catch` beneath it to handle errors.
+
+.async-with-try-catch.js
+[source,javascript,linenums]
+----
+async function getUserFollowers() {
+  try {    // <1>           
+    let user = await fetchJSON('/users/me');                   
+    let followerIDs = await fetchJSON(`/followers/${user.id}`);
+    let promises = followerIDs.map((id) => {                   
+      return fetchJSON(`/users/${id}`);
+    });
+    let followers = await Promise.all(promises); 
+    console.log(followers);
+  } catch (err) {    // <2>
+    console.log(err);
+  }
+}
+
+let promise = getUserFollowers();  
+----
+1> Wrap our `async` function in a `try` block. 
+2> Any errors from the `try` block will be caught by `catch` which will handle the errors accordingly.
+
+## Summary
+
+.Looking back to our callbacks
+****
+Async operations require some form of a callback to handle the data once it is available
+====
+.Callbacks can be difficult to work with:
+  - sequential execution *⇒* leads to callback hell
+  - parallel execution *⇒* just plain difficult to code
+====
+
+====
+.Promises:
+  - are syntactic sugar around callbacks
+  - provide objects that manage the status of the async operation
+  - make it easier to combine multiple async operations for either parallel or sequential execution
+  - make it easier to handle errors from async operations
+  - are widely used on both the *client* and *server* side of JavaScript development.
+====
+
+====
+.Async/Await:
+  - are syntactic sugar around promises
+  - allows you to write code in a sequential format but code may run concurrently or sequentially depending on where you put the `await` keyword
+  - use traditional `try/catch` for error handling
+====
+****
+
+## Lab -- 2 Minute Clock
+- Take the clock example from above, and implement the `.then()` method to maintain minutes as well as seconds. 
+
+- Make the clock count up to 2 minutes, and then the clock program ends.
+
+## Some Notes on Observables
+
+* Observables are another new hotness around async operations.
+* You can think of observables as being similar to promises but they handle _a stream of async data arriving over time_.
+  - Each piece of data is handled as it arrives.
+* You can `subscribe` to an `observable` and you can `unsubscribe`.
+* The Observable does not `resolve` like a promise does because _more data is on the way_!
+
+The https://github.com/ReactiveX/rxjs[*RxJS*] library is the de facto standard Observable library for JavaScript.
+
+## Additional Resources
+
+
+* http://rossboucher.com/await/#/[Nice Presentation on Async/Await^]
+* https://hackernoon.com/6-reasons-why-javascripts-async-await-blows-promises-away-tutorial-c7ec10518dd9[6 Reasons Why JavaScript’s Async/Await Blows Promises Away^]

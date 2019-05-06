@@ -1,0 +1,399 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-React"] {lesson-title}
+:lesson-title: AJAX and the fetch API
+:tags: AJAX xhr fetch
+:description: Working with AJAX and fetch to retrieve data from an API
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+## Concepts
+
+* Introduce AJAX
+* Explore various methods of working with AJAX including
+** XHR
+** jQuery AJAX
+** fetch
+
+## Skills
+
+* Understand and utilize AJAX in your applications.
+
+## What is AJAX?
+
+Asynchronous JavaScript And XML (abbreviated as AJAX) is the process of making asynchronous calls (through JS) from a client.
+
+When AJAX was introduced, it dramatically changed the landscape of web development.
+
+On of the main benefits of using AJAX is the ability to send and receive data without reloading the webpage/application.
+
+While XML _is_ in the title of AJAX, most modern applications use JSON to send and receive data.
+
+_note: We will be using link:https://jsonplaceholder.typicode.com/[JSON placeholder] for the examples_
+
+### XHR
+
+The super-vanilla way of making an AJAX call is to use the built-in XML HTTP Request Object, also known as XHR.
+
+XHR is verbose, but still good to know.
+
+This code can be executed from your local machine, or at this link:https://gist.github.com/shanebarringer/ac1775bf88c97bffe9ec930be19dbf8c[gist]
+
+[source, html]
+.index.html
+----
+<body>
+  <div class="main"></div>
+  <button id="btn">Make a Request</button>
+</body>
+----
+
+[source, javascript, linenums]
+.main.js
+----
+function usingXHR() {
+  var request = new XMLHttpRequest(); // <1>
+
+  request.onreadystatechange = function() { // <2>
+
+      if (request.readyState == XMLHttpRequest.DONE) { // <3>
+         if (request.status == 200) {
+             var myDiv = document.querySelector('.main'); // <4>
+             var newDiv = document.createElement('div'); // <4>
+             newDiv.innerHTML = request.responseText; // <4>
+             myDiv.appendChild(newDiv); // <4>
+         }
+         else if (request.status == 400) { // <5>
+            console.log('We have encountered an error.');
+         }
+         else { // <5>
+            console.log('Something other than 200 was returned');
+         }
+      }
+  };
+
+  request.open("GET", 'https://jsonplaceholder.typicode.com/todos', true); // <6>
+  request.send(); // <7>
+}
+
+(function(document){
+  document.getElementById('btn').addEventListener('click', usingXHR); // <8>
+})(document);
+----
+
+<1> use the `XMLHttpRequest` constructor function
+<2> The XHR `onreadystatechange` property contains an event handler that is called when the `readystatechange` event is executed
+<3> when the data transfer has completed (either success or failure)
+<4> if successful, create a new `div` with the response
+<5> handle the errors
+<6> Open up a request
+<7> Send the request
+<8> Run the `XHR` function on click
+
+====
+the `XHR` `open` method takes 2 main arguments
+
+* Action (`GET`, `PUT`, `POST`, `DELETE`)
+* URL/Endpoint
+
+and 3 optional arguments
+
+* Operate Asynchronously - true/false
+* user
+* password
+====
+
+### jQuery AJAX
+
+After looking at the above vanilla XHR object, jQuery's AJAX methods will shine in comparison.
+
+The jQuery version of the above XHR request looks something like:
+
+[source, html]
+.jquery
+----
+$.get('http://jsonplaceholder.typicode.com/todos', function(todos){
+  $('.main').append('<div>' + JSON.stringify(todos) + '</div>')
+})
+----
+
+jQuery handles AJAX quite well. However, there are a few drawbacks.
+
+* error handling becomes difficult and confusing very quickly.
+* you have to pull the entire jQuery library into your app just to use AJAX
+
+This is not to say that jQuery AJAX shouldn't be used. Especially if the pattern already implemented in an existing project.
+
+
+## fetch
+
+The fetch API was introduced around the same time as ES2015 as an alternative to XHR.
+
+Since then fetch has been adopted by most modern browsers and has a nifty polyfill for non-supportive browsers.
+
+To demonstrate, we'll slightly modify the html and variables.
+
+_note: the sample code can be found link:https://gist.github.com/shanebarringer/f0a15b140829b7de428c3440fd473f49[here]
+
+[source, html]
+.index.html
+----
+  <div class="main"></div>
+  <button id="all">All Tasks</button>
+  <button id="oneTask">One Task</button>
+  <button id="postBtn">Create Task </button>
+  <button id="ajaxBtn">Do AJAXy Stuff</button>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+const allTasks = document.querySelector('#all');
+const oneTask = document.querySelector('#oneTask');
+const postBtn = document.querySelector('#postBtn');
+const ajaxBtn = document.querySelector('#ajaxBtn');
+const mainDiv = document.querySelector('.main')
+----
+
+Next, let's use `fetch` to retrieve a single all tasks
+
+### get
+
+[source, javascript, linenums]
+.get
+----
+allTasks.addEventListener('click', () => {
+  fetch('http://jsonplaceholder.typicode.com/todos') // <1>
+    .then(response => response.json()) // <2>
+    .then(todos => {
+      const todoList = todos.map(task => `<p> ${task.title} </p>`) // <3>
+      return mainDiv.innerHTML = todoList // <4>
+    })
+})
+----
+
+<1> `fetch` requires a url/endpoint as the first argument
+<2> deserialize the response (parse the JSON)
+<3> `map` over the objects and return only the title
+<4> add the items to the main `div`
+
+You may have noticed the use of `.then`. This is because...
+
+[IMPORTANT]
+fetch it always returns a promise.
+
+While this is slightly more verbose than jQuery, the use of promises makes the code easy to follow.
+
+To get an individual task, we simply need to add the values to the URL
+
+[source, javascript, linenums]
+.get
+----
+oneTask.addEventListener('click', () => {
+  const userId = 1; // <1>
+  const taskId = 1; // <1>
+  fetch(`http://jsonplaceholder.typicode.com/users/${userId}/todos?id=${taskId}`) // <2>
+    .then(response => response.json())
+    .then(task => mainDiv.innerHTML = `<p> Task: ${task[0].title} </p>`);
+})
+----
+
+<1> store the values in a variable (optional)
+<2> add (interpolate) the values to your URL
+
+### post
+
+To make a post request with `fetch` you just need to add an options argument.
+
+[source, javascript, linenums]
+.post
+----
+postBtn.addEventListener('click', () => {
+  fetch(`http://jsonplaceholder.typicode.com/todos`, {
+    method: 'post', // <1>
+    data: {
+       completed: false, // <2>
+        title: "Pick up lightbulbs", // <2>
+        userId: 1 // <2>
+    }
+  })
+  .then(response => response.json())
+  .then(res => mainDiv.innerHTML = `<p> Task Added! </p>`)
+})
+----
+
+<1> Define the HTTP verb
+<2> Add the data
+
+_note: this is also where you can add headers to your request. See the additional resources section for more_
+
+### put
+
+Put follows a very similar pattern. The major difference being that we need to define the ID of the specific resource.
+
+[source, javascript, linenums]
+.put
+----
+ajaxBtn.addEventListener('click', () => {
+  fetch(`http://jsonplaceholder.typicode.com/todos/7`, {
+    method: 'put',
+    data: {
+      completed: true,
+      title: "Master Fetch",
+      userId: 1
+    }
+  })
+  .then(response => response.json())
+  .then(task => mainDiv.innerHTML = `<p> Task Updated! </p>`)
+})
+----
+
+In the example above, we are updating the task resource with an ID of 7.
+
+### delete
+
+For delete, we'll simply update the http verb
+
+[source, javascript, linenums]
+.delete
+----
+deleteBtn.addEventListener('click', () => {
+  fetch(`http://jsonplaceholder.typicode.com/todos/7`, {
+    method: 'delete',
+    data: {
+      completed: true,
+      title: "Master Fetch",
+      userId: 1
+    }
+  })
+  .then(response => response.json())
+  .then(task => {
+    console.log(task) // <1>
+    return mainDiv.innerHTML = `<p> Task Deleted </p>`
+  })
+})
+----
+
+<1> logging the task to demonstrate that an empty object is returned.
+
+// ### error handling
+//
+// While `fetch` is an excellent native solution, the API still has room to grow and improve. One area that can be tricky is error handling.
+//
+// Thankfully, fetch returns a promise. So once you understand the mechanics of error handling. you'll be good to go.
+
+### Summary
+
+As you can see, there are multiple options for making AJAX requests. Along with the 3 options above, there are several additional libraries that can be integrated with your applications.
+
+See the Additional Resources section for more.
+
+## Promises, Inquirer, and Fetching
+
+So far we've covered a few major topics in Promises, inquirer and fetch.  Now lets see how these things can be combined to in Node to produce something of value.
+
+
+.Main entery point for our CLI application
+[source,Javascript]
+--
+const inquirer = require("inquirer"),
+    questions = require('./questions/questions'),
+    {getUserInfo,getManagerInfo} = require('./services/userinfo')
+
+let userdata = {},
+    userout = {}
+
+inquirer.prompt(questions.baseuser).then(answer => { // <1>
+        return getUserInfo(answer.User) <2>
+    })
+    .then(response => response.json()) // <3>
+    .then(data => {
+        console.log('Got user info ')
+        userdata = data
+        userout = { // <4>
+            name: `${userdata.first_name} ${userdata.last_name}`,
+            email: userdata.email
+        }
+        return getManagerInfo(userdata.manager.links.href) // <5>
+    })
+    .then(response => response.json()) // <6>
+    .then(managerdata => {
+        userout.manager_name = `${managerdata.first_name} ${managerdata.last_name}` 
+        userout.manager_email = managerdata.email
+        return userout // <7>
+    })
+    .then(console.log) // <8>
+--
+
+<1> We ask for the user's ID, using the imported options from the `questions` module.
+<2>  Use the input to fetch the user details from the `services` module using the `getUserInfo()` function.
+<3>  Once this resolves, we need to parse the json.
+<4>  Using the parsed object, we build the `userout` object
+<5>  We then use the managers user endpoint from the user data to make a call to `getManagerInfo`
+<6>  Again, get the json object
+<7>  Compleat the `userout` object using the managers info and return it
+<8>  Log the result
+
+.Questions Module
+[source,Javascript]
+--
+const baseuser = [{
+    type: "input",
+    name: "User",
+    message: "What is the users id?"
+}]
+
+
+module.exports = {
+   baseuser
+}
+--
+
+Questions is setting up the options to pass to `inquirer`.  You could potenitally have more work to do and it everything related to it could be defined here.
+
+.Services Module
+[source,Javascript]
+--
+fetch = require("node-fetch")
+
+
+const getUserInfo = (id) => {
+    return fetch(`http://dapper.apps-zb.homedepot.com/users/${id}`)
+}
+
+const getManagerInfo = (path) => {
+    return fetch(`http://dapper.apps-zb.homedepot.com/${path}`)
+
+}
+
+
+module.exports = {
+    getUserInfo,
+    getManagerInfo
+
+--
+
+It will be typically to separate out calls to external API's this simply creates functions that will return the Promise that `fetch` returns.
+
+## LAB - Working with AJAX and Fetch
+
+Use `fetch` to get the following data from the link:https://jsonplaceholder.typicode.com/[JSON Placeholder API^]
+
+** Get all *albums*
+** Get the *photo* with `id` of 72
+** Get the *comments* from the *post* with an `id` of 10
+** Get all the *todos* from user with id of 3
+** Create a new *post* and render the response
+** Update the title of *post* #9 and render the response
+** Delete *photo* #11 and render a success message
+
+_note: Each operation should be use a separate `fetch` request_
+
+
+## Additional Resources
+
+* link:https://davidwalsh.name/fetch[Intro to Fetch] - Excellent resource on the basics of fetch
+* link:https://css-tricks.com/using-fetch/[CSS Tricks - Fetch Overview] - Excellent article that tackles all aspects of fetch, including Error handling
+* link:https://medium.com/@mutebg/its-fetch-time-or-how-i-stopped-using-http-libraries-d9fc93c4167[It's fetch time]
+* link:https://medium.com/@shahata/why-i-wont-be-using-fetch-api-in-my-apps-6900e6c6fe78[Why I won't be using fetch]
+* link:https://github.com/mzabriskie/axios[axios] - alternative library that is similar to fetch
+* link:http://visionmedia.github.io/superagent/[SuperAgent] - http library

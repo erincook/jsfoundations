@@ -1,0 +1,22 @@
+# {title}
+:title: Shopping List Lab
+:library: Asciidoctor
+:source-highlighter: pygments
+:pygments-linenums-mode: table
+:experimental:
+:last-update-label!:
+
+[source,javascript]
+----
+var list = ['pizza', 'ramen noodles', 'chips', 'salsa', 'coffee'];
+list[4] = 'single origin coffee';
+list.push('apples');
+list.splice(2,2,'rice', 'beans');
+
+var cart = [];
+cart.push(list.pop());
+cart.push(list.shift());
+
+cart.sort().reverse();
+console.log("My cart contains: ", cart.join(','));
+----

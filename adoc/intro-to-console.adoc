@@ -1,0 +1,248 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: The Console
+:tags: javascript browser console dev-tools
+:description: An introduction to the Chrome's JavaScript Console
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+## Learning Objectives
+
+### Concepts
+
+* Introduce the `window`, global objects, and location
+* Understand the DOM's history interface
+* Discuss local and session storage
+
+
+### Skills
+
+* Gain comfort interacting with the console
+
+
+## Global Objects
+
+
+The global object is created as soon as the Javascript interpreter starts. For Javascript running inside a browser, this means that as soon as a new page is loaded by the browser, the global object will be
+created.
+
+[TIP]
+In browsers, the `window` object doubles as the `global` object, meaning that `this` initially refers the `window`
+
+some examples:
+
+[source,javascript]
+----
+window.alert();
+window.prompt();
+window.confirm();
+----
+
+is the same as:
+
+[source,javascript]
+----
+this.alert();
+this.prompt();
+this.confirm();
+----
+
+[IMPORTANT]
+When scripts are loaded into an html document, the browser
+inserts some globals for us
+
+Some other examples of globals include:
+
+* functions such as: `parseFloat()`
+* properties such as `NaN`
+* objects such as `Math`
+
+In summary, the `window` object is basically a representation of an
+individual browser window. (otherwise no)
+
+## Location
+
+The `window.location` object can be used to get the current page address
+(URL) and to redirect the browser to a new page.
+
+[source,javascript]
+----
+window.location.href <1>
+
+window.location.hash <2>
+
+window.location.hostname <3>
+----
+<1> returns the href (URL) of the current page
+To see this in action, try this is the console (from any page)
+<2> sets or returns the anchor part of a URL, including the hash sign (#)
+<3> returns the domain name of the web host
+ope
+[source,javascript]
+----
+window.location.href = "http://www.google.com"
+----
+
+## History
+
+
+The `history` interface allows to manipulate the browser session
+history, that is the pages visited in the tab or frame that the
+_current_ page is loaded in.
+
+* `window.history.back();` Goes to the previous page in session history,
+(the same action as when the user clicks the browser's Back button)
+* `window.history.forward();` Goes to the next page in session history,
+(the same action as when the user clicks the browser's Forward button)
+* `window.history.go();`
+** takes an argument
+** `window.history.go(1);` moves forward one page
+** `window.history.go(-1);` moves back one page
+* HTML5 pushstate The `history.pushState()` method adds a state to the
+browsers history.
+
+[source,javascript]
+----
+var stateObj = { foo: "bar" };
+history.pushState(stateObj, "page 2", "bar.html");
+----
+
+Running the above code will cause the URL bar to display
+`http://your-site-name.com/bar.html`
+
+`pushState()` takes three parameters:
+
+* a state object
+* a title (which is currently ignored)
+* an optional URL
+
+
+## Dimensions and Position
+
+
+* `window.innerWidth` returns the inner width of a window's content
+area.
+* `window.innerHeight` returns the inner height of a window's content
+area.
+
+[CAUTION]
+these properties are read-only.
+
+Another nifty feature is `window.scrollY` and `window.scrollX`
+
+X and Y represent the X and Y axis of the window
+
+* Y is the number of pixels that the document is currently scrolled from
+the top
+* X is the number of pixels that the document is currently scrolled from
+the left
+
+[source,javascript]
+----
+// scroll to the bottom of a page and then paste this into the console
+
+if (window.scrollY) {
+  window.scroll(0, 0);  // will reset the scroll position to the top left of the document.
+}
+----
+
+[source,javascript]
+----
+var y = window.scrollY;
+
+window.scroll(0, 0);
+
+window.scroll(0, y);
+----
+
+## `localStorage` & `sessionStorage`
+
+Storage objects are simple key-value pairs (similar to objects) they
+stay intact through page loads.
+
+* The *keys* can be strings or integers
+* the *values* are always strings. +
+* You can access these values like an object
+* or with the `getItem()` and `setItem()` methods.
+
+The `sessionStorage` property allows you to access a session `Storage`
+object.
+
+* Data stored in `sessionStorage` gets cleared when the page session
+ends.
+* A page session lasts for as long as the browser is open and survives
+over page reloads
+* Opening a page in a new tab or window will cause a new session to be
+initiated
+
+`localStorage` while property similar to `sessionStorage` has:
+
+* no expiration time
+* persists even when the browser is closed and re-opened
+
+The `setItem()` method will add (or update) a key/value pair to the
+Storage object
+
+[source,javascript]
+----
+localStorage.setItem('bgcolor', 'aqua');
+----
+
+While the `getItem()` method will return that key's value.
+
+[source,javascript]
+----
+localStorage.getItem('bgcolor'); // "aqua"
+----
+
+Mozilla has a great demonstration link:http://mdn.github.io/web-storage-demo/[here^]
+
+Head over there and change the values, while calling `localStorage` to see the key/value pairs
+
+### A Note on Serialization
+
+You may have noticed that these key/value pairs resemble JSON. However, Attempting to store a JSON object in local storage will result in an error.
+
+Local storage requires you to store *strings* of information.
+
+_To store a JSON object in local storage you will need to convert it into a JSON-formatted string_, using the `JSON.stringify()` method.
+
+[source,javascript]
+----
+var user = {
+  name : "Shane",
+  job : "instructor"
+};
+
+var storeUser = JSON.stringify(user);
+
+localStorage.setItem('userInfo', storeUser);
+
+localStorage.getItem('userInfo');
+// "{"name":"Shane","job":"instructor"}"
+
+var serialized = localStorage.getItem('userInfo');
+
+console.log(serialized);
+// {"name":"Shane","job":"instructor"}
+----
+
+As previously discussed, this process is known as serialization. When working with API's you'll often need to serialize and/or de-serialize data.
+
+In our case, we could turn this JSON formatted string back into an object by calling `JSON.parse(serialized)`
+
+## LAB 1 - Working with the console
+
+* Loading an existing javascript file into your browser
+* Once loaded:
+** Access the variables/arrays
+** Call functions from console
+* Make the program interactive
+* Ask the user for input
+* Log results to the console
+* Display input on the DOM
+
+## Summary
+
+The JavaScript console gives us a REPL in the browser. Allowing us to interact with the `window` object, as well as our own code.

@@ -1,0 +1,122 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: LAB - Debugging Exercises
+:tags: javascript debugging chrome dev-tools
+:description: Debug this code
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+## Ants Go Marching
+
+* Create a new project titled debugging
+** add an index.html file
+** add a javascript file
+** link the two files together
+* In the JS file paste the above code
+* there are several errors in this code sample
+** use your debugger to track those errors down
+* We've already got a `debugger` statement to start with.
+* The finished output should be something like this:
+
+[source,javascript]
+.antsGoMarching
+----
+var littleOne = [];
+var howTheyMarch = ["one by one", "two by two", "three by three", "four by four", "five by five", "six by six", "seven by seven", "eight by eight", "nine by nine", "ten by ten"];
+
+function theAntsGoMarching(){
+    for (var i = 0; i < howTheyMarch.length; i++){
+        howManyByHowMany;
+        console.log(littleOne[i]);
+        console.log("And they all go marching down to the ground to get out of the rain, BOOM! BOOM! BOOM!");
+    }
+}
+theAntsGoMarching();
+
+littleOne[0] = "The little one stops to suck her thumb";
+littleOne[1] = "The little one stops to tie his shoe";
+littleOne[2] = "The little one stops to climb a tree";
+littleOne[3] = "The little one stops to shut the door";
+littleOne[4] = "The little one stops to take a dive";
+littleOne[5] = "The little one stops to pick up sticks";
+littleOne[6] = "The little one stops to pray to heaven";
+littleOne[7] = "The little one stops to roll a skate";
+littleOne[8] = "The little one stops to check the time";
+littleOne[9] = "The little one stops to shut The End";
+
+function howManyByHowMany(number){
+    var numbers = howTheyMarch;
+    var hurrah = " hurrah, hurrah \n";
+    var march = "The ants go marching " + numbers;
+  debugger
+    console.log(march + hurrah + march + hurrah + march);
+}
+----
+
+
+image:antsGoMarching.png[image]
+
+## Baa Baa Blacksheep
+
+* Using similar steps as above
+* create another project
+* link your html and JS
+* Paste in the code below
+* Debug it!
+
+[source,javascript]
+.baabaaBlacksheep
+----
+var woolOwners = [
+  {
+      "master": 1
+  },
+  {
+    "dame": 1
+  },
+  {
+    "little boy": 1,
+    "location": "down the lane"
+  }
+];
+
+
+var bags = haveYouAnyWool;
+
+var haveYouAnyWool = function() {
+    for (var i = 0; i < woolOwners.length; i++) {
+    var totalBags = totalBags + i;
+    }
+    return (i);
+};
+
+
+function baabaaBlackSheep() {
+    console.log("BaaBaa BlackSheep have you any wool?");
+    if (bags > 0) {
+        console.log("yes sir, yes sir " + totalBags + " bags full");
+  }
+}
+
+function oneForMy() {
+    for (var i = 0; i < 2; i++) {
+        people = Object.keys(woolOwners);
+        var person = people.toString();
+        console.log("one for my " + person);
+    }
+}
+
+baabaaBlackSheep();
+oneForMy();
+
+var boy = Object.keys(woolOwners[2]);
+var littleBoy = boy[2];
+
+var whereHeLives = littleBoy.location;
+console.log("one for the " + littleBoy + " that lives " + whereHeLives);
+----
+
+* your output should be:
+
+image:baa.png[image]

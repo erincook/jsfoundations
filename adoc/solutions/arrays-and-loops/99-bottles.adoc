@@ -1,0 +1,22 @@
+# {title}
+:title: 99 Bottles
+:library: Asciidoctor
+:source-highlighter: pygments
+:pygments-linenums-mode: table
+:experimental:
+:last-update-label!:
+
+
+[source,javascript]
+----
+var bottle = 99;
+
+for (bottle; bottle >= 0; bottle --){
+
+  if (bottle === 0) {
+    console.log("We're out of beer!");
+  } else {
+      console.log(bottle + " bottles of beer on the wall");
+  }
+}
+----

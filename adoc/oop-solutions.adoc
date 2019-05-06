@@ -1,0 +1,209 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: Object-Oriented Programming in JavaScript Lab
+:tags: javascript objects json
+:description: An Introduction to OOP Concepts with JavaScript
+:library: Asciidoctor
+:source-highlighter: pygments
+:pygments-linenums-mode: table
+:experimental:
+:last-update-label!:
+:idprefix:
+:numbered:
+:imagesdir: images
+:toc: left
+:toc-title: Topics
+:toclevels: 4
+// :css-signature: demo
+// :max-width: 800px
+// :doctype: book
+// :sectids!:
+:icons: font
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+
+## LAB 1 - Dog Objects
+
+* Create a dog object with the following properties:
+** Name
+** Owner
+** Species
+** Age
+** Gender
+** A `speak` functions that log's "woof, woof" to the console
+* Once you've built your object, create 3 more dog objects with the new values. +
+_note: you can re-use the speak function_
+* make your objects speak!
+
+
+## LAB 1 - Solution
+[source, javascript, linenums]
+----
+var miko = {
+  name: 'Miko',
+  owner: 'Mike',
+  species: 'dog',
+  age: 4,
+  gender: 'male',
+  speak: function() { return 'woof, woof'; }
+};
+
+var meisha = {
+  name: 'Meisha',
+  owner: 'Mike',
+  species: 'dog',
+  age: 3,
+  gender: 'female',
+  speak: function() { return 'woof, woof'; }
+};
+
+var hezekiah = {
+  name: 'Hezekiah',
+  owner: 'Shane',
+  species: 'dog',
+  age: 5,
+  gender: 'male',
+  speak: function() { return 'woof, woof'; }
+};
+
+var fluffy = {
+  name: 'Fluffy',
+  owner: 'Brandon',
+  species: 'dog',
+  age: 2,
+  gender: 'female',
+  speak: function() { return 'woof, woof'; }
+};
+
+console.log(fluffy.speak())
+----
+
+
+## LAB 2 - Pet Constructors
+
+* Use constructor functions to refactor your dog objects
+
+image::dancing-dog.gif[alt]
+
+
+
+## LAB 2 Solution
+
+[source, javascript, linenums]
+----
+function Pet(name, owner, species, age, gender){
+  this.name = name;
+  this.owner = owner;
+  this.species = species;
+  this.age = age;
+  this.gender = gender;
+  this.speak = function() { return 'woof, woof' };
+}
+
+var miko = new Pet('Miko', 'Mike', 'dog', 4, 'male')
+
+let meisha = new Pet('Meisha', 'Mike', 'dog', 3, 'female')
+
+var hezekiah = new Pet('Hezekiah', 'Shane', 'dog', 5, 'male')
+
+var fluffy = new Pet('Fluffy', 'Brandon', 'dog', 2, 'female')
+----
+
+
+## LAB 3 - Pet Prototypes
+
+* Remove the `speak` function and `species` property from your constructor
+* Using Prototypes...
+** Add the `speak` function and `species` property to
+** Create a `playFetch` function that uses the owner and pet's name to play fetch. +
+_ie: Shane throws tennis ball for Hezekiah to find and bring back_
+
+image::dog-fetch.gif[alt]
+
+
+
+## LAB 3 - Solution
+
+[source, javascript, linenums]
+----
+function Pet(name, owner, age, gender){
+  this.name = name;
+  this.owner = owner;
+  this.age = age;
+  this.gender = gender;
+}
+
+Pet.prototype = {
+  species: 'dog',
+  speak: function(){ return 'woof, woof'},
+  playFetch: function(){ return this.owner + ' throws tennis ball for ' + this.name + ' to find and bring back'}
+}
+----
+
+
+## LAB 4 - planetproto
+
+* Head on over to the link:https://github.com/sporto/planetproto[Planet Proto GitHub page^] and follow the readme to get up and running
+* Alternatively, you can simply follow the steps below:
+** create a new directory named *planetproto*
+** `cd` into that directory
+** run `npm install planetproto`
+** once the install finishes, run `planetproto` and follow the instructions
+
+## LAB 5: Mixins
+
+* Create a user profile object that contains properties for
+** name
+** address
+** city
+** state
+** zipcode
+** avatar
+* Write a function named `getProfileUpdate()` that _hypothetically_ asks the user to update their profile properties
+** this function should return information about the properties that were changed and list the new values. +
+_note: for now, just hard code the return value_
+* Write a function `updateProfile()` that takes a single object of _keys & values_ that overwrites those keys on the profile object
+* Using `getProfileUpdate`, update the user's profile
+* log the new profile
+
+## LAB 5: Answer
+
+[source,javascript]
+----
+var profile = {
+	name: 'Andre Benjamin',
+	address: '',
+	city: '',
+	state: '',
+	zipcode: '',
+	avatar: ''
+}
+
+function getProfileUpdate(){
+	//fake user input...
+	return {
+		name: 'Andre 3000',
+		avatar: 'outkast.png'
+	}
+}
+
+function updateProfile(updates) {
+	Object.assign(profile, updates);
+}
+
+var updates = getProfileUpdate();
+updateProfile(updates);
+
+console.log(profile);
+----

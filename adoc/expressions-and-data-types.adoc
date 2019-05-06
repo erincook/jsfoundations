@@ -1,0 +1,572 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: JavaScript Expressions and Data Types
+:tags: javascript expressions data-types
+:description: An Introduction to JavaScript Expressions and Data Types
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+* Describe the purpose of JavaScript variables
+* List the data types used by JavaScript
+* Compare static vs. dynamic typing
+* Explain the JavaScript operator precedence rules
+
+### Skills
+
+* Use the `*var*`, `*let*`, and `*const*` keywords to declare a variable
+* Properly name JavaScript variables using _Camel Case_
+* Define JavaScript expressions using parentheses to control operator precedence
+* Use String methods to access and manipulate String values
+
+
+## Basic Syntax
+
+### Variables
+
+* JavaScript variables are declared using the `*var*`, `*let*`, and `*const*` keyword.
+  - ECMAScript 2015 introduced the `*let*` and `*const*` keywords that also declare variables - more on those later
+* JavaScript variables have a *name* and a *value*.
+* JavaScript names should be _camelCase_ (a common best practice).
+
+.JavaScript
+[source,javascript,linenums]
+----
+const camelCase = 'Camel case capitalizes each word (except the first one).';
+const snake_case = 'Snake case is *not* recommended for JavaScript (but is recommended for Ruby).';
+----
+
+* Values are of a *type* such as `*String*`, `*Number*`, or `*Boolean*`.
+
+Here are some examples of JavaScript Variables:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const greeting = 'Hello, OM!';              // a String
+const year = 2015;                          // a Number
+const pi = 3.14159;                         // a Number
+const completed = false;                    // a Boolean (can be true or false)
+const fruit = ['Apple', 'Orange', 'Banana'] // an Array
+const person = {                            // an Object
+  firstName: 'Homer D.',
+  lastName: 'Poe'
+};
+const fullName = person.firstName + ' ' + person.lastName;
+----
+
+#### `let` & `const`
+
+With the release of ECMAscript2015, JavaScript received two new types of variables.
+
+#### `let`
+
+
+In it's most basic form, `let` is a sibling of `var`. However there is a
+difference.
+
+* `var` creates a variable scoped to it's parent function (or in the
+global scope)
+* `let` scopes the variable to it's nearest block, (`if` statements,
+`for` loops, etc)
+
+This concept is known as *block scoping*. More on that later.
+
+Using `let` presents many benefits that you will come to appreciate later, including:
+
+* tighter control over your variables in regards to:
+** lexical scope
+** closures
+** hoisting
+* less errors at run-time
+* easier debugging
+
+#### `const`
+
+The `const` declaration creates a _constant_. Which is essentially a
+*read-only* reference to the value.
+
+This means that once a constant is declared, it cannot be re-assigned or
+re-declared.
+
+[source,javascript,linenums]
+----
+const instructors = ["Shane", "Brandon"];
+instructors = ["Mike", "Mystery Guest"];
+----
+
+[TIP]
+A common misconception is that `const` is immutable. This is not
+entirely true. If the reference value of `const` is a complex object
+(ie: function, array, object), the _contents can be modified_.
+
+[source,javascript,linenums]
+----
+const instructors = ["Shane", "Brandon"];
+instructors.push("Mike", "Mystery Guest");
+
+console.log(instructors);
+----
+
+A couple of other notes on `const`:
+
+* variables declared with `const` can be upper or lower-case
+* `const` follows the same *block scope* principles as *let*
+
+The use of `const` and `let` gives you more control over your code and
+makes it much more readable for other developers.
+
+### Dynamic Typing
+
+JavaScript uses *dynamic typing* as opposed to *static typing*.
+
+Some languages use *static* typing and some languages use *dynamic* typing for defining the data type of a variable or expression.
+
+A programming language is said to use *static typing* when *type* checking is performed during compile-time as opposed to run-time. In *static typing*, types are associated with variables not values.
+Some *statically typed* languages are _C_, _C++_, _Java_, and _Scala_.
+
+.Example of *Static Typing* (Java)
+[source,java,linenums]
+----
+int x = 3;     // x has been declared as an integer data type
+String message = "Java uses static typing";
+x = false;    // compiler error: incompatible types
+----
+
+*Dynamically typed* programming languages do *type* checking at run-time as opposed to compile-time. A language is *dynamically typed* if the type is associated with run-time values, and not named variables. This means that you as a programmer can write a little quicker because you do not have to specify types every time.
+
+Some *dynamically typed* languages are _JavaScript_, _Ruby_, and _Python_.
+
+.Example of *Dynamic Typing* (JavaScript)
+[source,javascript,linenums]
+----
+let x = 3;    // x has been declared and is assigned an integer value
+const message = "JavaScript uses dynamic typing";
+x = false;    // no error, x is now assigned a boolean value of false
+----
+
+
+[NOTE]
+====
+There is no consensus on whether *static* typing or *dynamic* typing is better. There are advantages and disadvantages to each. *Static* typing provides for additional compile-time checks that may catch bugs in the code. *Static* typing also provides a kind of *self documentation* because the explicit types declare how the variables are to be treated (what expressions they may hold and what expressions they can be included in).
+
+The disadvantages to *static* typing include the extra mental and typing effort required to declare the type of each variable, the added verbosity of the written code, and the sometimes difficult work of making changes to the types when new features mandate that the types of variables be adjusted.
+====
+
+### Comments
+
+You can add single-line comments to JavaScript using `//` and multi-line comments using /* and */.
+
+.JavaScript
+[source,javascript,linenums]
+----
+// this is a single line comment.
+
+let x = 3;     // this is a comment at the end of a line.
+
+/* This is a multi-line comment, good for longer comments that need to span
+multiple lines.
+*/
+
+let y = 4;
+----
+
+### Semicolons
+
+It is good practice to end every *statement* with a semi-colon.
+
+*Statements* are lines of code that do actual work:
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 3;     // a declaration statement
+x = x + 1;     // an assignment statement
+if (x > 10) {  // control flow, not a statement
+  console.log('x is big');  // a statement for writing to the console.
+}              // end of if block, not a statement.
+----
+
+### All Variables Should Be Declared
+
+This is bad:
+
+.JavaScript (Bad)
+[source,javascript,linenums]
+----
+x = 3      // this line is missing the `var` keyword and the semicolon.
+----
+
+The above code will often work but is not considered good style and can lead to subtle bugs in your code.
+
+The proper code is:
+
+.JavaScript (Good)
+[source,javascript,linenums]
+----
+let x = 3;
+----
+
+Here we have used the `let` keyword to declare the variable `x` and we have also added the semicolon at the end of the assignment statement!
+
+## Datatypes
+
+While JavaScript uses *dynamic* typing, it is still important to understand how the data types of expressions affect the behavior of the expressions.
+
+JavaScript supports the following data types:
+
+### Primitive Data Types
+
+.Primitive Data Types
+[cols="^.^1e, .^3d, .^2d", options="header"]
+|===
+^| Type ^| Description ^| Examples
+| String | A sequence of characters | "Hello", \`goodbye`, '123'
+| Number | An integer or floating point number | 23, 3.14, -17
+| Boolean | A true or false value | true, false
+|===
+
+### Composite (Reference) Data Types
+
+.Composite Data Types
+[cols="^.^1e, .^3d, .^2a", options="header"]
+|===
+^| Type ^| Description ^| Examples
+| Array
+| An indexed list of values
+|
+```javascript
+[1, 2, 3], 
+['apple', 'orange', 'banana'], 
+['Brenden Eich', 10, 1995, 'Netscape'] 
+```
+| Object
+| A collection of properties where each property is an association between a name (or key) and a value.
+|
+```javascript
+{
+  name: 'Mike',
+  age: 29,
+  hobbies: ['drums', 'cycling', 'photography']
+}
+```
+|===
+
+### Special Types and Values
+
+JavaScript supports the following _special_ types and values:
+
+.Special Types and Values
+[cols="^.^1e, .^3d", options="header"]
+|===
+^| Value   ^| Description
+| undefined | A variable that has not been assigned a value is of type `undefined`
+| null      | This value represents the intentional absence of a value (a value has not yet been determined).
+| NaN       | NaN means _Not a Number_. This value results from mathematical operations that result in a mathematical error, for example `3 / 'hello'`.
+| Infinity  | A `numeric` value that is too large to represent, for example `3 / 0`.
+|===
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = null;         // the value of x is null
+let y;                // the value of y is undefined
+let z = 3 / 'hello';  // the value of z is NaN
+let w = 3 / 0;        // the value of w is Infinity
+----
+
+
+### The `typeof` Operator
+
+JavaScript provides the `typeof` operator for determining the data type of a variable.
+
+.using typeof
+[source,javascript,linenums]
+----
+let x = 3;
+console.log(typeof x); // prints 'number'
+x = 'hello';
+console.log(typeof x); // prints 'string'
+----
+
+NOTE: NaN is type number!  JavaScript Gotcha!
+----
+> typeof NaN
+// number
+----
+
+## Expressions
+
+### Number Operations
+
+JavaScript's numeric operators are `+`, `-`, `*`, `/` and `%`, the latter being the remainder operator (which is not the same as modulo for negative numbers).
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 3;
+let y = 4;
+const sum = x + y;           // 7
+const product = x * y;       // 12
+----
+
+Exponents can be expressed using Math.pow().
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = Math.pow(3,4);
+// 81
+----
+
+Operators have a precedence (just like we learned in grade school). The precedence is:
+
+1. parentheses: `()`
+2. `*`, `/`, `%`
+3. `+`, `-`
+
+This can be remembered by the mnemonic *PeMDAS* (Parentheses, Multiplication, Division, Addition, Subtraction).
+
+Expressions are evaluated from higher to lower precedence and then from left to right. For example:
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 3 + 4 * 5 / 2 - 1;
+----
+
+will be evaluated as:
+
+```
+3 + ( (4 * 5) / 2 ) - 1   // multiplication and division first (evaluated ltr)
+3 + ( (20 / 2 ) - 1
+3 + 10 - 1                // addition and subtraction last (evaluated ltr)
+13 - 1
+12
+```
+
+.Question
+****
+What is the output of the following code?
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 5;
+let y = 3;
+let result = 2 + x * (x + 1) / y - 3;
+console.log(result);
+----
+
+Try it in your browser to confirm your answer.
+****
+
+### Shorthand Assignment Statements
+
+There are shorthand assignment statements such as `+=` and `-=` that extend out to x = x operator y.
+
+.JavaScript
+[source,javascript,linenums]
+----
+let x = 3;
+let y = 4;
+x += 10;        // 13  (equivalent to x = x + 10)
+y *= 2;         // 8   (equivalent to y = y * 2)
+----
+
+### Strings and String Operations
+
+* String literals can be written with back-ticks, single quotes, or double quotes:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const city    = `Atlanta`;   // back-ticks
+const state   = 'Georgia';   // single quotes
+const zipcode = "30308"  ;   // double quotes
+----
+
+* Strings have a set of properties and methods that can be used to get information about the string, get parts of the string, or manipulate the string in some way:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const greeting = 'Hello, OM!';
+greeting.length;                    // 10
+greeting.charAt(0);                 // 'H'
+greeting.charAt(5);                 // ','
+greeting.indexOf('O');              // 7
+greeting.substring(7, 9);           // 'OM'
+greeting.toLowerCase();             // 'hello, om!'
+greeting.toUpperCase();             // 'HELLO, OM!'
+greeting;                           // 'Hello, OM!' (has not changed)
+----
+
+* Strings can be joined together (concatenated) using the `+` operator:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const city    = `Austin`;   
+const state   = 'TX'    ;   
+const zipcode = "78753" ; 
+
+const address = city + ', ' + state + ' ' + zipcode;  // 'Austin, TX 78753'
+----
+
+#### Template Literals
+
+Template literals were introduced with ES2015 and provide an additional mechanism for declaring strings.
+
+According to link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals[Mozilla]:
+[quote]
+____
+Template literals are string literals allowing embedded expressions.
+____
+
+This means that you can use multi-line strings and string interpolation (more on that later).
+
+[TIP]
+This feature was known as "template strings" in prior editions of the ES2015 / ES6 specification.
+
+* Template literals are enclosed by the back-tick ( ` ) character, instead of quotation marks
+
+[source,javascript,linenums]
+----
+console.log(`Hello! I'm a template literal, aka: a string!`)
+----
+
+##### Multi-Line Strings
+
+Template literals also support multi-line strings with ease, unlike regular string literals.
+
+[source,javascript,linenums]
+.regular-string-literals-with-quotation-marks
+----
+console.log("string text line 1\n"+
+"string text line 2");
+----
+
+[source,javascript,linenums]
+.template-literal-with-back-ticks
+----
+console.log(`string text line 1
+string text line 2`);
+----
+
+#### String Concatenation and Interpolation
+
+Template Literals also allow interpolation, while traditional strings rely on concatenation with the `+` operator
+
+
+[source,javascript,linenums]
+.concatenation
+----
+const name = "Shane";
+const day = "Tuesday";
+
+console.log("Hello "+ name + ", I hope you have a great " + day + "!");
+----
+
+While this works, template literals allow you to wrap your variables with `${}`.
+
+This will take care of utilizing the value that your variable is pointing to.
+
+
+[source,javascript,linenums]
+.interpolation
+----
+const name = "Shane";
+const day = "Monday";
+
+console.log(`Hello ${name}, I hope you have a great ${day}!`);
+----
+
+
+### Converting Strings to Numbers
+
+.JavaScript
+[source,javascript,linenums]
+----
+parseInt('25374', 10);              // 25374
+parseInt('hello', 10);              // NaN
+----
+
+### Boolean Expressions
+
+* A boolean value can be either **true** or **false**.
+* Boolean values can be combined using the logical operators && (AND) and || (OR).
+* The boolean ! (NOT) operator will invert the boolean value.
+* The order of boolean operator precedence is:
+  1. `!`
+  2. `&&`
+  3. `||`
+
+.JavaScript
+[source,javascript,linenums]
+----
+let a = 3;
+let b = 5;
+let c = -12;
+let x = a < b;   // true
+let y = c > 0;   // false
+
+!x               // false
+x && y           // false
+x || y           // true
+x && !y          // true
+----
+
+## Type Casting and Type Coercion
+
+Sometimes we need a variable of one type to be converted into a different type (usually inside of an expression). The conversion can either be explicit (casting) or implicit (coercion).
+
+* _Casting_ - the code explicitly convert a variable into a different type.
+* _Coercion_ - the JavaScript runtime converts the variable into a different type in an attempt to evaluate an expression that needs the data to be in the new type.
+
+Below is an example.
+
+.JavaScript
+[source,javascript,linenums]
+----
+// type casting - explicit
+const n = Number('123');    // cast a string to a number
+const s = String(456);      // cast a number to a string
+const b = Boolean('');      // cast a string to a boolean (follows the rules of truthy/falsey)
+
+console.log(n, s, b);
+
+const n2 = +'-123';         // coercion to Number to satisfy the unary `+` operator
+const s2 = '' + 456;        // coercion to String to satisfy the binary `+` operator with a string on the LHS
+const b2 = !!'';            // coercion to Boolean to satisfy the logical NOT operator
+
+console.log(n2, s2, b2);
+
+const b3 = -1;              // try different values here
+const b3AsABoolean = !!b3;
+if (b3) {
+	console.log('b3 is truthy');
+}
+else {
+	console.log('b3 is falsey');
+}
+----
+
+
+## Summary
+
+* JavaScript is a *dynamically typed* programming language.
+* JavaScript variables are used to hold values (data).
+* JavaScript variables should be named using _Camel Case_.
+* The common JavaScript data types are String, Number, Boolean, Array, and Object.
+* JavaScript operator precedence follows the PeMDAS mnemonic - parentheses, multiplication, division, addition, subtraction.
+
+### Temperature Conversion
+
+https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/expressions/instructions[Temperature Converter^]

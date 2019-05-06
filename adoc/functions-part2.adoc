@@ -1,0 +1,694 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+JavaScript Foundations
+:lesson-title: Function Deep Dive
+:tags: javascript functions
+:description: Exploring JavaScript Functions
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+* **Describe** Pure Functions
+* **Explain** Function Declaration and Function Assignment
+* **Demo** Anonymous Functions
+* **Discuss** Rest & Default params
+
+### Skills
+
+* **Understand** Function Assignment
+* **Write** any type of function
+
+
+## Pure Functions
+
+Functions that do *not* change the environment (and thus only return a value) are called *pure* functions. In other words, *pure* functions *have no side-effects*!
+
+Pure functions are important because they are easier to reason about and easier to test because they are completely *deterministic* (i.e. predictable).
+
+Pure functions also provide for easier *composition*.
+
+image::composite-function.png[Composite Function]
+
+Let's look at a comparison
+
+.pure-function
+[source,javascript,linenums]
+----
+function multiply(x, y) {
+  return x * y;
+}
+---- 
+
+
+.function-with-side-effects
+[source,javascript,linenums]
+----
+let x = 10
+
+function multiply(y) {
+  x = x * y
+  return x
+}
+---- 
+
+Can you spot the difference? 
+
+The first example: 
+
+- will always return the same value, given the same inputs
+- does not affect variables outside it's scope 
+
+The second example will impact `x` and change it every single time. Meaning that we'll never get the same result twice, as `x` is continually changed. 
+
+Please note that it's perfectly fine to write functions that aren't considered "pure". Just be aware that too many functions modifying the global scope can have unintended consequences. 
+
+[TIP]
+One of the primary characteristics of *Functional Programming* is that most or all of the functions are *pure* functions.
+
+## Functions as 1st Class Citizens
+
+In computer science, a programming language is said to have *first-class* functions if it treats functions as first-class citizens.
+
+Specifically, this means that the language supports:
+
+* Assigning functions to variables
+* Storing functions within data structures
+* Passing functions as arguments to other functions
+* Returning functions as the value from other functions
+
+NOTE: Treating functions as arguments to other functions is often used in Event Processing. To handle an interesting event a *callback* function is passed into another function and the callback will be called in the future when an interesting DOM event occurs. We will see this technique frequently when we get to DOM manipulation using JavaScript.
+
+## Function Declarations
+
+Function Declaration should feel natural as this is the format we have primarily used up this point in the course.
+
+
+.simple-declaration
+[source,javascript,linenums]
+----
+function square(x) {
+  return x * x;
+}
+---- 
+
+With that in mind, it's worth noting function declaration is not the only way to write functions in JavaScript
+
+## Function Assignment - Storing Functions in Variables
+
+JavaScript can store anything in variables, *_including functions_*!
+
+Here is an example:
+
+.JavaScript
+[source,javascript,linenums]
+----
+// adder is a variable whose value is a function!
+const adder = function(a, b) {
+  return a + b;
+}
+
+// sum is a variable whose value is the sum of 3 and 5.
+let sum = adder(3, 5);
+----
+
+Functions can also be stored as properties of an object
+
+.functions-as-object-properties
+[source,javascript,linenums]
+----
+const mathHelpers = {
+  square: function(x) {
+    return x * x;
+  },
+  average: function(x, y) {
+    return (x + y) / 2;
+  }
+};
+----
+
+
+This practice is known as *Function Assignment* and is quite common.
+
+
+## Anonymous Functions
+
+Functions don't have to have a name or be assigned to a variable. Instead they can be defined and used immediately.
+
+.named-and-anonymous-function-example
+[source,javascript,linenums]
+----
+function foo() {
+  // This is a named function...
+}
+
+function() {
+  // This is an anonymous function...
+}
+----
+
+Common uses of anonymous functions include:
+
+* passing the function as an argument *to another function*, where that function can be used as a callback or event handler
+* assigning a function to the property of an object 
+* using a function that may only be called once, and does not need to be stored in memory
+
+### Examples of Anonymous Functions
+
+We've actually already seen anonymous functions in use with the `forEach` loop
+
+.forEach-anonymous-function-as-argument
+[source,javascript,linenums]
+----
+const associates = ["bob", "emily", "antonio", "elizabeth"]
+
+associates.forEach(function(associate){
+  console.log(associate.toUpperCase())
+})
+---- 
+
+Here we have passed an anonymous function as an argument to `forEach`. As we see below, this could also be a named function. 
+
+.forEach-named-function-as-argument
+[source,javascript,linenums]
+----
+const associates = ["bob", "emily", "antonio", "elizabeth"]
+
+function upperCaseAssociates(associate){
+  console.log(associate.toUpperCase())
+}
+
+associates.forEach(upperCaseAssociates)
+---- 
+
+However, given that we only need to use this function once, it makes sense to just use an anonymous function.
+
+
+Another example is the `reduce` function.
+
+.reduce-anonymous-function-as-argument
+[source,javascript,linenums]
+----
+const numbers = [1, 2, 3, 4, 5]
+
+let sum = numbers.reduce(function(a, b) {
+  return a + b;
+});
+---- 
+
+Here we are passing an anonymous function as the argument to `reduce`.
+
+
+.anonymous-function-with-objects
+[source,javascript,linenums]
+----
+const person = {
+  name: 'Homer D. Poe',
+  age: 29,
+  greet: function() {   
+    return 'Hello ' + this.name + '!  I see that you are ' + this.age + ' years old!';
+  }
+};
+
+console.log(person.greet());
+----
+
+Above we have assigned an anonymous function to the `greet` property. 
+
+[IMPORTANT]
+The function itself is anonymous but it is assigned to
+a object property that has a name
+
+
+.additional-anonymous-function-examples
+[source,javascript,linenums]
+----
+const mathHelpers = {
+  square: function(x) {
+    return x * x;
+  },
+  average: function(x, y) {
+    return (x + y) / 2;
+  }
+};
+
+let x = mathHelpers.square(4);
+let y = mathHelpers.average(5, 9);    
+
+console.log(x,y)
+// 16
+// 7
+----
+
+## Arrow Functions
+
+ES2015 Introduced us to Arrow Functions, a new way to write functions. 
+
+The signature of an arrow function is as follows.
+
+[source,javascript,linenums]
+.implicit-return
+----
+const myFunction = (myParameters) => {
+  // do something with myParameters
+}
+----
+
+- Arrow Functions are function assignments
+- place the parameter first
+- use a fat arrow `=>`
+
+### Parameters
+
+Arrow functions may take a variety of parameters, and with a variety of syntax.
+
+Arrow functions may have no parameters.
+
+[source,javascript,linenums]
+.no-parameters
+----
+const noParams = ( ) => {
+  // do something
+}
+----
+
+Arrow functions may have single parameters.
+
+[source,javascript,linenums]
+.single-parameters
+----
+const oneParamWithParens = (x) => {
+  // do something with x
+}
+
+const oneParamWithoutParens = x => {
+  // this also works
+}
+----
+
+[TIP]
+Arrow functions with a single parameter don't require parentheses
+
+Arrow functions may have multiple parameters.
+
+[source,javascript,linenums]
+.multiple-parameters
+----
+const multipleParams = (x, y) => {
+  // do something with x and y
+}
+----
+
+### Implicit Returns
+
+Arrow functions have a couple of interesting traits not found in traditional JavaScript functions. 
+
+One of those traits is that arrow functions will _implicitly return_ when consolidated to one line, or wrapped in parentheses
+
+[source,javascript,linenums]
+.implicit-return
+----
+const sum = (x, y) => x + y
+----
+
+is equal to:
+
+[source,javascript,linenums]
+.implicit-return
+----
+function sum(x, y){
+  return x + y
+}
+----
+
+Arrow functions also allow for lexical binding which will be discussed later in the course.
+
+## Lab 1 - Function WarmUps
+
+Complete the following 3 Exercises found at link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/functions[JSF Function Exercises]
+
+### Summing Orders
+
+Start with the Summing Orders challenge
+
+- Instructions can be found link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/functions#summing-orders[here]
+- Starter code can be found in `JavaScript-Foundations-Exercises/functions/summingOrders.js`
+- tests can be started with `npm run test:summingOrders`
+
+### Update Balance
+
+Move to the Update Balance challenge
+
+- Instructions can be found link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/functions#update-balance[here]
+- Starter code can be found in `JavaScript-Foundations-Exercises/functions/updateBalance.js`
+- tests can be started with `npm run test:updateBalance`
+
+### funFunction
+
+Finish up with the funFunction challenge
+
+- Instructions can be found link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/functions#funfunction[here]
+- Starter code can be found in `JavaScript-Foundations-Exercises/functions/funFunction.js`
+- tests can be started with `npm run test:funFunction`
+
+## Higher Order Functions and Callbacks
+
+As you dig deeper into the functional nature of JavaScript, it won't be long before you run into the concept of Higher Order Functions, and while the term might sound intimidating, you've already been using them! 
+
+A Higher Order Function has at least one of the two following characteristics:
+
+- Accepts a function as an argument
+
+or 
+
+- Returns a function as it's result
+
+### Accepting a function as an argument
+
+Our favorite array methods are all Higher Order Functions. 
+
+Take a look at `.map` again. 
+
+[source,javascript,linenums]
+.map-HOF
+----
+const numbers = [2, 3, 4]
+
+const squared = numbers.map(function(number){
+  return number * number
+})
+
+const plusOne = numbers.map(function(num){
+  return num + 1
+})
+----
+
+In the above example, we see `.map` taking in different functions as arguments.
+
+What's interesting is that the functions passed to `.map` perform different operations. `.map` handles implementing each function properly because it is engineered to take a function as an argument.
+
+
+### Returning a function
+
+We may also choose to return a function. 
+
+[source,javascript,linenums]
+.echo
+----
+function echo(timesToEcho) {
+
+  function printValue(valueToEcho) {           // <1>            
+    while (timesToEcho > 0) {                  // <2> 
+      console.log(valueToEcho.toUpperCase());  // <3>
+      timesToEcho--;                           // <4>
+    }; 
+  }
+
+  return printValue;                           // <5>
+}
+
+const threeEchos = echo(3);                    // <6>
+const fiveEchos = echo(5);                     // <7>
+
+threeEchos("hello");
+fiveEchos('echooo!');
+----
+
+<1> Declare an inner function named `printValue`
+<2> Use the `timesToEcho` variable
+<3> Print the value (which will be provided later)
+<4> Decrement the `timesToEcho` variable
+<5> Return the `printValue` function
+<6> Invoke the `echo` function, and store the return value (`printValue` function) in `threeEchos`
+<7> Store the return value of the `echo` function in `fiveEchos`
+
+This pattern allows us to use functions in interesting ways. For example, let's make a function that imitates a light switch  
+
+[source,javascript,linenums]
+.light-switch
+----
+function lightSwitch(location) {
+  return function(action){
+    console.log(`turning ${location} light ${action}`)
+  }
+}
+
+const kitchenLight = lightSwitch('kitchen')
+const hallwayLight = lightSwitch('hallway')
+
+kitchenLight('on')
+kitchenLight('off')
+
+hallwayLight('on')
+hallwayLight('off')
+----
+
+### Writing our Own Higher Order Function 
+
+Writing a Higher Order Function is fairly straight-forward.
+
+[source,javascript,linenums]
+.introduction
+----
+function introduction(firstName, lastName, callback) { // <1>
+  const fullName = firstName + " " + lastName;  // <2>
+
+  callback(fullName); // <3>
+}
+
+introduction('foo','bar', function(value){ // <4>
+  console.log(`Hello ${value}` )
+})
+----
+
+<1> Provide a parameter that will ultimately become a function
+<2> Concatenate `firstName` and `lastName` variables
+<3> Invoke the callback function 
+<4> Pass an anonymous function as the `callback` argument
+
+We can also provide named functions as arguments. 
+
+[source,javascript,linenums]
+.introduction-with-named-function
+----
+function introduction(firstName, lastName, callback) {
+  const fullName = firstName + " " + lastName; 
+
+  callback(fullName); 
+}
+
+function welcome(value){
+  console.log(`Hi ${value} welcome to OM!`)
+}
+
+introduction('foo','bar', welcome)
+----
+
+You'll find more helpful articles on Higher Order Components in the link:https://pages.github.homedepot.com/OM-JavaScript/JavaScript-Foundations/functions-part2.html#additional_resources[additional resources] section.
+
+### Lab 2 - Higher Order Functions
+
+Complete the link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/blob/master/functions/instructions/04-Higher-Order-Functions.md[Higher Order Functions Exercises^]
+
+* Instructions can be generated with `npm run instructions`
+  ** select **Functions**
+  ** select **04 Higher Order Functions**
+* Starter code can be found at: `functions/higherOrderFunctions.js`
+* Tests can be started with: `npm run test:higherOrderFunctions`
+
+## Parameters & Arguments
+
+While arguments and parameters are often used inter-changeably, there is a difference that is worth discussing. 
+
+* Parameters are a part of the function signature (definition)
+* Arguments are the values supplied to a function during invocation. 
+
+[source,javascript,linenums]
+.parameters-and-args
+----
+function sum(x, y){ // <1>
+  return x + y
+}
+
+sum(2, 3) // <2>
+----
+
+<1> `x` and `y` are *parameters* in the function declaration. 
+<2> `2` and `3` are *arguments* supplied to the function when called. 
+
+Check out the link:https://pages.github.homedepot.com/OM-JavaScript/JavaScript-Foundations/functions-part2.html#additional_resources[additional resources] section for more info regarding params and args.
+
+
+## Default Parameters
+
+A welcome change in ES2015 is *default parameters*.
+
+[IMPORTANT]
+This feature allows you to pass default arguments to the parameters of your functions.
+
+Before we dive into the syntax, let's look at the ES5 work-around
+
+[source,javascript,linenums]
+.ES5
+----
+function hello(name) {
+  name = name || 'Mystery Person';
+
+  console.log('Hello ' + name + "!");
+}
+
+hello("Bob");
+
+hello();
+----
+
+While this is a very clever work-around, it can backfire when dealing with booleans and numbers.
+
+Let's look at how to use *default params*
+
+[source,javascript,linenums]
+.ES2015
+----
+function hello(name = "Mystery Person"){
+    console.log(`Hello ${name}!`);
+}
+
+hello("Cliff");
+
+hello();
+----
+
+Multiple default parameters can be added and mixed with regular parameters.
+
+[TIP]
+However, keep in mind that *parameters without _default's_
+will initially receive the value of undefined* (like normal).
+
+[source,javascript,linenums]
+----
+function hello(day, name = "Mystery Person"){
+    console.log(`Hello ${name}! have a great ${day}`);
+}
+
+hello();
+----
+
+## Rest Parameters
+
+The *rest parameter* lets you pass an indefinite number of arguments as an array.
+
+Rest parameters are invoked using the `...` syntax
+
+This is similar to the *arguments* object in ES5. However, *rest parameters* offer significant advantages.
+
+[IMPORTANT]
+Arguments is a special object supplied to functions by JavaScript.
+
+[source,javascript,linenums]
+.using-arguments-object
+----
+function add() {
+    console.log("arguments object:", arguments);
+
+    let numbers = Array.prototype.slice.call(arguments); //<1>
+
+    let sum = 0;
+
+    numbers.forEach(function (number) {
+       sum += number;
+    });
+    return sum;
+}
+
+console.log(add(1,2,3,4,5,6,7,8));
+// arguments object: {"0":1,"1":2,"2":3,"3":4,"4":5,"5":6,"6":7,"7":8}
+// 36
+----
+
+<1> We first have to convert the *arguments* object into an
+array, because it's not an _actual array_
+
+[TIP]
+Rest parameters on the other hand, provides an *actual array* _meaning
+methods like `sort`, `map`, `forEach` and `pop` can be applied on it
+directly_.
+
+
+[source,javascript,linenums]
+.with-rest-params
+----
+function add(...numbers){
+  console.log("rest parameters:", numbers);
+
+  let sum = 0;
+
+  numbers.forEach(function (number) {
+    sum += number;
+  });
+  return sum;
+}
+
+ console.log(add(1,2,3,4,5,6,7,8));
+----
+
+As you can see, this new syntax is much more readable. You can immediately tell this function can take any number of arguments.
+
+_Just for fun, lets use `reduce` and arrow functions to make our `add` function a one-line statement_
+
+[source,javascript,linenums]
+----
+let add = (...numbers) => numbers.reduce((sum, number) => sum += number, 0)
+
+console.log(add(1,2,3,4,5,6,7,8));
+----
+
+It's also possible to combine `rest` parameters with multiple arguments
+
+[source,javascript,linenums]
+.multiple arguments
+----
+function addStuff(x, y, ...z) {
+    return (x + y) * z.length
+}
+
+console.log(addStuff(1, 2, "hello", "world", true, 99));
+// 12
+----
+
+[IMPORTANT]
+rest parameters must be the last argument in the function
+signature
+
+## LAB 3 - Calculator Revisited
+
+Complete link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/calculator#part-2---single-calculator-function[part 2^] of the calculator challenge, then move on to the link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/tree/master/calculator#extra-credit[extra credit^] challenges.
+
+- Remove pending status from the remaining tests (including the extra credit test)
+- Write the code to make the tests pass
+
+- starter code can be found at: `calculator/calculator.js`
+- tests can be found at: `calculator/\__tests__/calculator.test.js`
+- tests can be started with `npm run test:calculator`
+
+## Summary
+
+* Functions can be *named* or *anonymous*.
+* *Pure* functions do not have side-effects and are thus easier to test and maintain!
+* Higher Order Functions take in a function as an argument and/or return a function
+* Rest Parameters offer a welcome alternative to the `arguments` object and allow a virtually unlimited number of arguments.
+
+
+## Additional Resources
+
+* link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions[MDN: JavaScript Functions^]
+* link:http://eloquentjavascript.net/03_functions.html[Eloquent JavaScript: Functions^]
+* link:https://www.lullabot.com/articles/higher-order-functions-in-javascript[Higher Order Functions in JavaScript^]
+* link:https://medium.com/javascript-scene/higher-order-functions-composing-software-5365cf2cbe99[Higher Order Functions (Composing Software)^]
+* link:https://codeburst.io/parameters-arguments-in-javascript-eb1d8bd0ef04[Parameters vs. Arguments^]
+
+video::BMUiFMZr7vk[youtube]
+

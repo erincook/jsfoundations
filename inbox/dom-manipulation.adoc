@@ -1,0 +1,441 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: DOM Manipulation and DOM Events
+:tags: javascript dom dom-manipulation dom-events
+:description: An Introduction to DOM Manipulation with Vanilla JavaScript
+:library: Asciidoctor
+:source-highlighter: pygments
+:pygments-linenums-mode: table
+:experimental:
+:idprefix:
+:numbered:
+:imagesdir: images
+:toc: left
+:toc-title: Topics
+:toclevels: 4
+// :css-signature: demo
+// :max-width: 800px
+// :doctype: book
+// :sectids!:
+:icons: font
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+{description}
+
+To recap, the Document Object Model (DOM) is a JavaScript representation of the HTML document loaded into the browser. The DOM API lets you:
+
+* Find elements (nodes) in the document
+* Edit, add, or remove nodes
+* Attach event handlers that respond to user input.
+
+## Find Nodes
+
+There are a few different ways to get a node or array of nodes from the document.
+
+### getElementById()
+
+Gets a single node based on the html element's `id` attribute
+
+
+[source, html, linenums]
+.html
+----
+<input id="username"></input>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+var el = document.getElementById('username'); // <1>
+----
+
+<1> get a single element
+
+### getElementsByTagName() & getElementsByClassName()
+
+Gets an array of nodes based on a tag name or className
+
+[source, html, linenums]
+.html
+----
+<input type="text" class="error"></input>
+<input type="password"></input>
+<button>submit</button>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+
+var inputs = document.getElementsByTagName('input'); // <1>
+var inError = document.getElementsByClassName('error'); // <1>
+
+inputs.length; //2
+inError.length; //1
+
+----
+
+<1> Get ALL elements
+
+### querySelector & querySelectorAll
+In practice, these are the only DOM selectors you will ever need. They take a CSS selector as an argument, which means you can easily duplicate the functionality from the other DOM selection functions.
+
+[source, html, linenums]
+.html
+----
+<input type="text" class="error"></input>
+<input type="password" class="password"></input>
+<button>submit</button>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+var firstButton = document.querySelector('button');
+var inError = document.querySelectorAll('input.error');
+
+firstButton // <1>
+inError //<2>
+----
+
+<1> single button node
+<2> Node list of inputs with class 'error'
+
+## NodeList vs Array
+It seems like querySelectorAll should return an Array of elements. In fact, it returns a nodeList, which offers a similar, but not identical API to Array.
+
+[source, javascript, linenums]
+.JavaScript
+----
+var links = document.querySelectorAll('a');
+
+//Works!
+var linkCount = links.length;
+var firstLink = links[0];
+
+//Doesn't work!
+links.forEach(function(link){
+	//do something with link
+});
+----
+
+Array methods like `forEach`, `map`, `reduce`, and so on, don't work. Luckily, its easy enough to convert a nodeList into an Array;
+
+[source,javascript, linenums]
+----
+var links = document.querySelectorAll('a');
+var arrayOfLinks = Array.from(links);
+----
+
+## Traversing the DOM
+
+You can use the children, parent, nextElmentSibling, and previousElementSibling attributes to find nodes relative to a node you have. This process is known as _traversing the DOM_.
+
+### Children
+
+Use the children property to gets a *nodeList* of all the nodes contained in the node.
+
+[source, html, linenums]
+.html
+----
+<ul>
+  <li>Item 1</li>
+	<li>Item 2</li>
+</ul>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+var listItems = document.querySelector('ul').children;
+listItems.length; //2
+----
+
+### Siblings and Parents
+
+Use parent, nextElementSibling, and previousElementSibling to find nodes up the tree and across it.
+
+[source, html, linenums]
+----
+<header>
+	<ul>
+		<li>Item 1</li>
+		<li>Item 2</li>
+		<li>Item 3</li>
+	</ul>
+</header><section>
+	Hello!
+</section>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+var selectedItem = document.querySelector('li.selected')
+var first = selectedItem.previousElementSibling;
+var last = selectedItem.nextElementSibling;
+var list = selectedItem.parentElement;
+var header = selectedItem.parentElement.parentElement;
+var section = selectedItem.parentElement.parentElement.nextElementSibling;
+----
+
+## LAB 1 - Selecting Nodes
+
+[source,html]
+----
+<html>
+	<body>
+		<header>
+			<ul>
+				<li class="first">Item 1</li>
+				<li class="selected">Item 2</li>
+				<li class="last">Item 3</li>
+			</ul>
+		</header>
+		<div class="col">
+			<section>
+				<h2>Section 1</h2>
+			</section>
+			<section class="current">
+				<h2 class="highlight">Section 2</h2>
+			</section>
+			<section>
+				<h1>Section 2</h1>
+			</section>
+		</div>
+	</body>
+</html>
+----
+
+Using the above html:
+
+. Get the header element
+. Get all the section elements
+. Get the section element with class="current"
+. Get the section that comes after the current section
+. Get the h2 node from the section before the 'current' section
+. Get the div that contains the section that has an h2 with a class of 'highlight'
+. Get all the sections that contain an H2 (using a single statement);
+
+## Editing a node
+
+A *Node* object has some useful properties and methods to let you access its contents and edit its appearance and content.
+
+### innerHTML
+
+The sledgehammer approach. Get or set the html text inside a node. This is really simple and sufficient in most cases.
+
+[source, html, linenums]
+.html
+----
+<div>
+  <a>Click me</a>
+</div>
+----
+
+[source,javascript,linenums]
+.html
+----
+var div = document.querySelector('div');
+var a = document.querySelector('a');
+
+a.innerHTML; //"click me"
+div.innerHTML; //'<a href="#">Click me</a>'
+
+a.innerHTML = "Updated link text";
+----
+
+### Attributes
+
+Get and set attributes like object properties
+
+[source,html,linenums]
+.html
+----
+<a href="http://google.com" name="googleLink">Click me</a>
+----
+
+[source,javascript, linenums]
+.JavaScript
+----
+var a = document.querySelector('a');
+
+//Get an attribute
+a.href; //"http://google.com"
+
+//Set an attribute
+a.name = 'new link name';
+
+//Add a new attribute
+a.target = "_blank";
+----
+
+### Removing nodes
+
+Use `remove` to remove a node from a document.
+
+[source, html, linenums]
+.html
+----
+<header>
+	<ul>
+		<li>Item 1</li>
+		<li>Item 2</li>
+		<li>Item 3</li>
+	</ul>
+</header><section>
+	Hello!
+</section>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+document.querySelector('.first').remove(); // <1>
+----
+
+<1> Remove the first list item
+
+### Adding nodes
+
+Create a node using `document.createElement('tagname')` and `node.appendChild(el)`
+
+[source, html, linenums]
+.html
+----
+<header>
+	<ul>
+		<li>Item 1</li>
+	</ul>
+</header>
+----
+
+[source, javascript, linenums]
+.JavaScript
+----
+var newLI = document.createElement('li');
+newLI.innerHTML = "Item 2";
+
+var list = document.querySelector('ul');
+list.appendChild(newLI); <1>
+----
+
+<1> Insert after item 1
+
+## LAB 2 - Editing the DOM
+
+[source,html,linenums]
+.html
+----
+<html>
+	<body>
+		<h2>Shopping List</h2>
+		<ul id="list">
+			<li>Pizza</li>
+			<li>Coffee</li>
+			<li>Cliff Bars</li>
+			<li>Veggie Burgers</li>
+		</ul>
+	</body>
+</html>
+----
+Using the above html:
+
+. Update the 'Coffee' item to say 'Fair Trade Coffee'
+. Remove 'Veggie Burgers' from the list
+. Add an item 'Cheese Whiz'
+. Clear the list and programmatically add items from the array `['protein powder', 'muscle milk', 'power bars']`
+. Add the class 'important' to the muscle milk item.
+
+## DOM Events
+
+As previously discussed, async programming is important in JS. DOM events allow us to make use of asnychronous functions
+
+Elements emit events based on user input. You can run code in response to them. Events include:
+
+* *Mouse events* - click, mouseover, mouseout
+* *Keyboard events* - keydown, keyup, etc
+* *Form events* - submit, blur, focus, change,
+* *window events* - load, hashchange, etc.
+* *touch events* - touchstart, touchend, etc.
+
+Check out http://www.w3schools.com/jsref/dom_obj_event.asp[w3 DOM Events] for a more complete description of DOM Events
+
+[source,javascript]
+.JavaScript
+----
+var el = document.getElementById('myEl');
+el.addEventListener('click', function(event){
+	alert('clicked!');
+})
+
+//Combine with DOM editing
+el.addEventListener('mouseover', function(event){
+	el.innerHTML('over');
+})
+----
+
+### Event object
+
+You may be wondering what that event parameter is...
+_An event object is passed to the event handler that describes what happened_. The event object is different depending on the type of event.
+
+Events include:
+. target - element where event occurred
+. Mouse: clientX, clientY
+. Keyboard: keyCode, shiftKey
+
+### Event Bubbling
+
+When an event is triggered on an element, it then gets fired on that element's parents, all the way to the top.
+
+* event.target is the element where the event originally occurred
+* event.currentTarget is the element running the event handler (this!).
+
+[source,html,linenums]
+.html
+----
+<div class="outer">
+	<div class="inner">click me</div>
+</div>
+----
+
+[source,javascript,linenums]
+.JavaScript
+----
+document.querySelector('.outer').addEventListener('click', function(e){
+	console.log(e.target, e.currentTarget);
+	// e.target = inner
+	// e.currentTarget = outer
+})
+----
+
+[TIP]
+`e` represents the event (element that has been clicked)
+
+## LAB 3 - Build a TODO App
+
+Create a simple todo application
+
+* Show an unordered list of todo's
+* Show an input to enter a new todo
+* Show a button to add a todo. When the button is clicked:
+** The text from the input box is used to add a list item to the bottom of the list
+** The text from the input box is cleared out.
+* When the user clicks on a list item, it is removed
+* *Extra Credit:* - When a list item is clicked, cross it out, then remove it after 1 second.
+
+
+## Additional Resources
+
+https://developer.mozilla.org/en-US/docs/Web/API/Node
+
+https://developer.mozilla.org/en-US/docs/Web/API/Document
+
+https://developer.mozilla.org/en-US/docs/Web/API/NodeList

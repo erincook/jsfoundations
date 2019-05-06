@@ -1,0 +1,205 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+JavaScript Foundations
+:lesson-title: Classes
+:tags: javascript objects json oop object-oriented classes
+:description: Introducing the class keyword
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+- Demonstrate the `class` keyword and it's role in JavaScript
+
+- Discuss what's happening behind the scenes
+
+## Classes
+
+One of the most interesting features of ES2015 is the
+introduction of Object Oriented Keywords. The benefit of this feature, is that developers more accustomed to Object Oriented Programming can easily work with Constructors and Prototypes.
+
+[IMPORTANT]
+the class features simply syntactic sugar, not an actual change to the functional nature of JavaScript
+
+[source,javascript,linenums]
+.using construtors and prototypes
+----
+function Person (name, job) {
+  this.name = name;
+  this.job = job;
+};
+
+Person.prototype.getName = function getName () {
+  return this.name;
+};
+
+Person.prototype.getJob = function getJob () {
+  return this.job;
+};
+var goodGuy = new Person('Jim Gordon', 'Commissioner');
+console.log(goodGuy.getName());
+// Jim Gordon
+----
+
+[source,javascript,linenums]
+.ES2015 class keyword
+----
+class Person { // <1>
+
+  constructor (name, job) { //<2>
+    this.name = name;
+    this.job = job;
+  }
+
+  getName () { // <3>
+    return this.name;
+  }
+
+  getJob () { // <3>
+    return this.job;
+  }
+}
+
+let goodGuy = new Person('Jim Gordon', 'Commissioner');
+console.log(goodGuy);
+//Jim Gordon
+----
+
+<1> Use the `class` keyword followed by a capitalized name
+<2> add a constructor function
+<3> add instance methods that give you access to the object's properties
+
+### Inheritance
+
+This syntactic sugar provides a nice, clean way to create inheritance chains
+
+[IMPORTANT]
+note remember that JS inheritance is still instance based (not class based)
+
+
+[source,javascript,linenums]
+.inheritance
+----
+function Person (name, job) {
+  this.name = name;
+  this.job = job;
+};
+
+Person.prototype.getName = function getName () {
+  return this.name;
+};
+
+Person.prototype.getJob = function getJob () {
+  return this.job;
+};
+
+function SuperHero (name, heroName) {
+  Person.call(this, name, heroName);
+}
+
+SuperHero.prototype = Object.create(Person);
+SuperHero.prototype.constructor = SuperHero;
+
+SuperHero.parent = Person.prototype;
+SuperHero.prototype.getJob = function () {
+  return 'I am '+ this.job + "!"
+};
+
+var batman = new SuperHero('Bruce Wayne', 'Batman');
+
+console.log(batman.getJob());
+----
+
+As you can see, this is pretty verbose (but at least we know what's going on!). Let's take a look at the class syntax
+
+[source,javascript,linenums]
+.ES2015
+----
+class Person {
+
+  constructor (name, job) {
+    this.name = name;
+    this.job = job;
+  }
+
+  getName () {
+    return this.name;
+  }
+
+  getJob () {
+    return this.job;
+  }
+}
+
+class SuperHero extends Person { // <1>
+
+  constructor (name, heroName, superPower) {
+    super(name); // <2>
+    this.heroName = heroName; // <3>
+    this.superPower = superPower; // <3>
+  }
+
+  secretIdentity(){
+    return `${this.heroName} is ${this.name}!!!`
+  }
+
+}
+let batman = new SuperHero("Bruce Wayne", "Batman");
+
+console.log(batman.secretIdentity())
+// Batman is Bruce Wayne!!!
+----
+
+The 3 things that you'll notice:
+
+<1> create a new SuperHero `class` and use the `extends` keyword to indicate you want to inherit from the
+Person `class` _after all, superhero's are People too_
+<2> the use of `super()` allows the reuse of existing `name` functionality from our Person `class`.
+<3> Adds superhero specific features to our constructor function
+
+#### Getters and Setters
+
+If you have experience with Object Oriented programming, chances are that you're familiar with _getters_ and _setters_
+
+Getters allow us to easily *read* (access) an object's property. Setters allow us to *write* (modify) an object's property.
+
+[source,javascript,linenums]
+----
+class Person {
+
+  constructor (name) {
+    this.name = name;
+  }
+
+  set name (name) {
+    this._name = name;
+  }
+
+  get name () {
+    return this._name
+  }
+
+}
+
+let goodGuy = new Person('Jim Gordon');
+console.log(goodGuy.name);
+// Jim Gordon
+
+goodGuy.name = "James Gordon";
+console.log(goodGuy.name);
+// James Gordon
+----
+
+## LAB - Class Syntax
+
+Using the `class` syntax, refactor your existing code from the link:file:///Users/mxb5594/curriculum/javascript-foundations/docs/oop.html#lab_3_pet_prototypes[Pet Prototypes Lab^]
+
+
+## Summary
+
+The `class` keyword is syntactic sugar that abstracts away some of the complication when dealing with Constructors and Prototypes.
+

@@ -1,0 +1,25 @@
+# {title}
+:title: Addressing Objects
+:library: Asciidoctor
+:source-highlighter: pygments
+:pygments-linenums-mode: table
+:experimental:
+:last-update-label!:
+
+[source,javascript]
+----
+course.name;
+course.teachers[1];
+course.students[0].name;
+course.students[1].computer.type;
+course.preReqs.equipment
+course.preReqs.equipment.OSOptions[1];
+course.preReqs.equipment.OSOptions.join(' or ');
+
+var macOS = [];
+for(var i = 0; i < course.students; i++) {
+ if(course.students[i].computer.OS === 'macOS')
+ 	macOS.push(course.students[i]);
+}
+console.log(macOS);
+----

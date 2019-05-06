@@ -1,0 +1,63 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: LAB - Email Client
+:tags: javascript lab objects arrays email
+:description: Pair with a teammate to create an object that models the data of your favorite email application.
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+## Setup
+
+* Open your preferred email application and take a look at the interface.
+* What information do you see? Make a short list (e.g. emails, my name, mailbox list, an email preview...)
+* Make a detailed outline of the data hierarchy. E.g -
+** Gmail
+*** mailboxes
+**** inbox
+**** starred
+**** sent
+*** Chat Contacts
+**** David
+**** Shane
+**** Brandon
+**** Mike
+*** Emails
+
+* For each bullet in your outline, decide if it is a primitive, array, or object.
+
+## Instructions
+
+### Build an Object
+
+* Use this information to create an object literal that models the application's data. For example...
+
+[source, javascript, linenums]
+----
+var appData = {
+	name: 'Gmail',
+	mailboxes: [
+		'inbox',
+		'starred',
+		'sent',
+	],
+	contacts: [
+		{name: 'Shane', lastMessage: "Had a great class today!"},
+		{name: 'Brandon', lastMessage: "Excellent!"}
+	]
+
+	//...
+}
+----
+
+Add as much detail as you'd like. Experiment and have fun with it. Nest objects inside of arrays and arrays inside of objects multiple levels deep. Ask yourself if some of the primitives you've created could be objects instead.
+
+### Address properties
+
+Once you've built your object, write some code to address it.
+
+* print (console.log) a list of mailbox names
+* print a list of emails
+* print the text of the second email in the visible list
+* Mark an email as sent
+* Add a draft email to the drafts mailbox

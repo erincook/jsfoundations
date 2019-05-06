@@ -1,0 +1,324 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: JavaScript Context
+:tags: javascript context
+:description: An Introduction to JavaScript Object Context
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+
+## Learning Objectives
+
+### Concepts
+
+* Explain JavaScript *context* and what the value of the `this` keyword refers to
+* Demo the `this` keyword and explain when/how it is used
+* Explain the default context of Javascript
+* Use `bind` to create a new method bound to an object context
+* Use `apply`/`call` to execute a method in a different context
+* Demonstrate lexical `this` with arrow functions
+
+### Skills
+
+* Use the `this` keyword to set and retrieve a property in a Javascript function
+* Know how to keep the appropriate context in your applications
+
+## What is context?
+
+Context is feature of the Javascript language related to how and when/where functions are invoked (aka called).
+
+In short, the _context is the *object* that a function is *attached* to_. (Though we'll see that context can change under certain circumstances).
+
+Every time a Javascript function is called, a context is determined and/or set. 
+
+That context is always an object, and can be referenced (in the function definition) using the `this` keyword  
+
+[IMPORTANT]
+`this` is a reserved word in JavaScript, like `function`, `break`, `new` `import`, etc. 
+
+Here's an example of the most common way context is determined for a function
+
+.JavaScript
+[source,javascript,linenums]
+----
+const instructor = {
+  fullName: 'Homer D. Poe',
+  favoriteFood: 'Steak',
+  sayHello: function() {
+    console.log('Hi! My name is ' + this.fullName + ', and my favorite food is ' + this.favoriteFood);
+  }
+};
+
+instructor.sayHello() // for this function invocation, `this` is `instructor`
+----
+
+[TIP]
+When a method is called on an object, that object becomes the context.
+
+This feature allows not just 'getting' property info on objects, but also
+setting properties. Consider this example:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const xwing = {
+    pilot: null,
+
+    setPilot: function(newPilot) {
+        this.pilot = newPilot;
+        this.notifyUpdate();
+    },
+
+    notifyUpdate: function() {
+        console.log('This X-Wing has changed!');
+    }
+};
+
+xwing.setPilot("Luke Skywalker");
+// >> "This X-Wing has changed!"
+
+console.log(xwing.pilot);
+// >> "Luke Skywalker"
+----
+
+## Default Context
+
+When a function is called, but it's not a method on an object, and no context
+is otherwise assigned (see later sections), then the context is set to the
+default context. In a browser, the default context is the `window` object.
+
+In NodeJS, the default object is called the global object.
+
+.JavaScript
+[source,javascript,linenums]
+----
+function revealThis() {
+  console.log(this);
+}
+
+revealThis();
+----
+
+## Gotcha With `this`
+
+### Class Discussion
+
+Consider the following code sample...
+
+
+Using what we know about context, predict what the value of `this` will be on the lines where `this` is used.
+
+
+.JavaScript
+[source,javascript,linenums]
+----
+const instructor = {
+  fullName: 'Homer D. Poe',
+  favoriteFoods: ['Pizza', 'Pad Thai', 'Steak'],
+  displayFoods: function() {
+    console.log('Favorite foods for', this.fullName);
+    this.favoriteFoods.forEach(function(food) {
+      console.log(this.fullName + ' likes ' + food);
+    })
+  }
+};
+
+instructor.displayFoods();
+----
+
+### Answer
+
+In the first case, `this` behaves like we would expect, (it references `instructor` since it's inside a function attached to an `instructor`.
+
+In the second case, `this` is inside an _anonymous function_, so it refers to the *global* object!
+
+Note that this issue frequently appears anytime we use a *callback* / *anonymous function*, such as:
+
+* using `setTimeout()` or `setInterval()` to schedule callbacks
+* using `forEach()` or other iteration functions
+* event listeners passed into `someElement.addEventListener()`
+
+## Fixes for the `this` gotcha
+
+### Closure Hack
+
+One trick is to store the `this` you want in another variable, commonly named `self` or `that`.
+
+.closure-hack
+[source,javascript,linenums]
+----
+const instructor = {
+  fullName: 'Homer D. Poe',
+  favoriteFoods: ['Pizza', 'Pad Thai', 'Steak'],
+  displayFoods: function() {
+    const self = this;
+    console.log('Favorite foods for', self.fullName);
+    this.favoriteFoods.forEach(function(food) {
+      console.log(self.fullName + ' likes ' + food);
+    })
+  }
+};
+
+instructor.displayFoods();
+----
+
+**Mini-Discussion**: Use what we know about scope to explain why this fix works.
+
+### Bind
+
+Another way is to address the `this` issue is to use the `bind` method on the function. 
+
+This will force the function to always use the specified value as it's context.
+
+.bind-method
+[source,javascript,linenums]
+----
+const instructor = {
+  fullName: 'Homer D. Poe',
+  favoriteFoods: ['Pizza', 'Pad Thai', 'Steak'],
+  displayFoods: function() {
+    console.log('Favorite foods for', this.fullName);
+    this.favoriteFoods.forEach(function(food) {
+      console.log(this.fullName + ' likes ' + food);
+    }.bind(this));
+  }
+};
+
+instructor.displayFoods();
+----
+
+### LAB 1 - Cat Surprise
+
+Fork link:http://codepen.io/drmikeh/pen/ZORARa?editors=1010[this codepen]
+
+Notice that it's broken! 
+
+Fix the JavaScript so that clicking the image correctly alerts us to Mr. McWhiskertons' favorite pastimes.
+
+- - -
+
+### Call/Apply
+
+There are two other ways to invoke a function and change the context, which are very similar: `call` and `apply`.
+
+Here's an example of how to use call:
+
+.JavaScript
+[source,javascript,linenums]
+----
+function sayHello() {
+  console.log("Hi! My name is " + this.name);
+}
+
+const person = {name: "Manatee the Railyard Toreador"};
+const cat = {name: "Hobbles McGillicudy"};
+sayHello.call(person);
+sayHello.call(cat);
+----
+
+`call` also lets us pass in the arguments to the function:
+
+.JavaScript
+[source,javascript,linenums]
+----
+function sayHello(favColor) {
+  console.log("Hi! My name is " + this.name + " and I like " + favColor);
+}
+
+const person = {name: "Manatee the Railyard Toreador"};
+const cat = {name: "Hobbles McGillicudy"};
+sayHello.call(person, "blue");
+sayHello.call(cat, "peachpuff");
+----
+
+`apply` works almost exactly like `call`, only you pass in an *array* of arguments instead of a comma-separated list.
+
+See the https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply[MDN documentation^] for more.
+
+### Arrow functions
+
+Okay, so we've saved the best for last. 
+
+[IMPORTANT]
+Arrow functions use _lexical binding_, which simply means:
+*arrow functions bind to the scope of where they are _defined_ not where they are used*
+
+In other words, arrow functions interpret `this` at the time of *declaration*. This is different from traditional JS functions as they use *dynamic* scope and interpret `this` at the runtime (whenever they are called/invoked). 
+
+
+Let's look at an example.
+
+.arrow-function
+[source,javascript,linenums]
+----
+// ...
+
+    this.favoriteFoods.forEach(food => {
+      console.log(this.fullName + ' likes ' + food);
+    }
+
+// ...
+instructor.displayFoods();
+----
+
+Above, the arrow function defines `this` when the function is declared.
+
+[source,javascript,linenums]
+.arrow-function-inside-of-function
+----
+const teacher = {
+    name: 'Shane',
+    speak: function() {
+        let boundFunction = () => {
+            console.log('later my name is ' + this.name);
+        }
+
+        setTimeout(boundFunction,1000);
+    }
+}
+
+teacher.speak();
+----
+
+
+## Four Ways of Defining Context
+
+There are 4 ways that context (this) can be defined for a function invocation. In order of precedence, the 4 ways are:
+
+. Is the function called with `new` (*new binding*)? If so, `this` is the newly constructed objects
+
+    const supreme_pizza = new Pizza();
+
+. Is the function called with `call` or `apply` (*explicit binding*), even hidden inside a `bind` *hard binding*? If so, `this` is the explicitly specified object.
+
+    const baked_pizza = bake.call( raw_pizza );
+
+. Is the function called with a context (*implicit binding*), otherwise known as an owning or containing object? If so, `this` is *that* context object.
+
+    const baked_pizza = raw_pizza.bake();
+
+. Otherwise, default the `this` (*default binding*). If in `strict mode`, pick `undefined`, otherwise pick the `global` object.
+
+    const probably_wont_work = bake();
+
+Source: https://github.com/getify/You-Dont-Know-JS/blob/58dbf4f867be0d9c51dfc341765e4e4211608aa1/this%20&%20object%20prototypes/ch2.md[You-Dont-Know-JS^]
+
+
+## Summary
+
+Context is the object that a function is attached to.
+
+When/where a function is invoked depends on context.
+
+Context can change in certain circumstances.
+
+Context is determined dynamically at runtime when the function is *invoked*, _except_ in the case of arrow functions which are lexically bound to the context where they are *declared*.
+
+## Additional Resources
+
+* http://ryanmorr.com/understanding-scope-and-context-in-javascript/[Understanding Scope and Context in JavaScript^]
+* http://javascriptissexy.com/understand-javascripts-this-with-clarity-and-master-it/[Understand JavaScript’s “this”^]
+* http://toddmotto.com/everything-you-wanted-to-know-about-javascript-scope/[Everything you wanted to know about JavaScript scope^]

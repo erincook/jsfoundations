@@ -1,0 +1,415 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: JavaScript Closures
+:tags: javascript context
+:description: An Introduction to Closures in JavaScript.
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to Introduction to JavaScript]
+
+
+## Learning Objectives
+
+- Define what a closure is
+- Explain why closures are used
+- Write a function that uses a closure to control access to data
+- Explain why and from what we are trying to protect data
+
+## What are Closures
+
+A closure is a function or object that has bindings to variables that were in scope at the time that the function or object was created.
+
+These bindings are valid even when the function or object is operating outside of the original scope and thus it appears that the bindings are to variables that have since gone out of scope. 
+
+image:escher.jpg[] 
+
+
+
+A function or object is called a _closure_ because it "closes around" some variables and functions. It's like an envelope containing variables and functions. When you send that envelope around, it still contains bindings to all of the variables and functions that were in scope when it was created.
+
+
+image:inception.gif[]
+
+====
+Remember that:
+
+1. We can pass functions around by putting them in variables or referencing them by name.
+2. Functions can be passed in as arguments to other functions.
+3. Functions can return other functions.
+4. No matter how they are passed around, a function _remembers_ the variables in scope at the time of it's definition.
+====
+
+### Class Discussion
+
+Where have we seen examples of 1-3 (even possibly 4) in practice already?
+
+## Storing Functions
+
+Let's quickly review storing functions in variables:
+
+.sayHello
+[source,javascript,linenums]
+----
+const sayHello = function() {
+  console.log("hello!");
+}
+
+sayHello();
+----
+
+
+.greetByName
+[source,javascript,linenums]
+----
+function greet(name) {
+  return "hello " + name;
+}
+
+const greetShane = greet('Shane')
+
+console.log(greetShane)
+----
+
+.add
+[source,javascript,linenums]
+----
+function add(x, y) {
+  return x + y
+}
+
+const four = add(2, 2)
+
+console.log(four)
+// 4
+----
+
+
+## Passing Functions as Arguments
+
+You've probably seen functions being passed as arguments out in the wild. For example...
+
+.client-side-example
+[source,javascript,linenums]
+----
+function alertUser() {
+  console.log("Warning!");
+}
+
+const button = document.getElementById("big-red-button")
+button.addEventListener("click", alertUser);
+
+// or
+const button = document.getElementById("big-red-button")
+button.addEventListener("click", function() {
+  console.log("Warning!");
+});
+----
+
+Additionally, we might do something like: 
+
+.forEach
+[source,javascript,linenums]
+----
+const numbers = [1,2,3];
+let sum = 0;
+
+function plusTen(num){  // <1>
+  sum += (num + 10) // <2>
+} // <1>
+
+numbers.forEach(plusTen) // <3>
+
+console.log(sum)
+----
+
+<1> Create a function named `plusTen` that adds 10 to each number. 
+<2> The initial value of sum of _closed into_ the `plusTen` function. 
+<3> Pass that function as an argument to `forEach`
+
+This pattern will be explored in depth later. For now, we just want you to be aware of this as an option
+
+### Returning Functions / Remembering Scope
+
+Closures are often pull variables from their lexical scope, in order to use those values at a later time. Consider this a memory hack. 
+
+Also, functions can return inner functions that aren't accessible to the outside world. 
+
+Consider the following example: 
+
+.closures
+[source,javascript,linenums]
+----
+function sayHelloGenerator(){
+  const prefix = "Hello "; // <1>
+
+  function hey(name){ // <2>
+    return prefix + name; // <3>
+  }; // <2> 
+
+  return hey; // <4>
+};
+
+const sayHey = sayHelloGenerator(); // <5>
+
+const msg = sayHey("Bart"); // <6>
+console.log(msg);
+----
+
+<1> Create a variable in the parent function's scope
+<2> Create an inner function (not visible to the outside scope)
+<3> Use `prefix` as an argument. _note: we are not supplying a `name` at this point_
+<4> Return the inner function body (not invoked)
+<5> Assign the `sayHelloGenerator` function to `sayHey` variable
+<6> Invoke the `sayHey` function and **supply a name argument**
+
+### Lab 1 - Define Scope
+
+1. Write the scope diagram for the code above
+
+## An Object Oriented approach to closure
+
+Objects can also make use of closures, by pulling in data from their own properties, or the outside scope
+
+.object-closure
+[source,javascript,linenums]
+----
+function generateUser(name){
+  const domain = "@home_depot.com"
+
+  const user = {
+    name: name,
+    
+    email: function(){
+      return this.name + domain
+    },
+
+    printEmail: function (){
+      return `${this.name}'s email is: ${this.email()}` 
+    }
+  }
+  
+  return user
+}
+----
+
+
+As you can see, this pattern can lend itself to rather interesting solutions. For example, let's take a look at how a traffic light might work. 
+
+.a-more-complex-example
+[source,javascript,linenums]
+----
+function makeTrafficLight(name) {
+  
+  let state = 'red'; 
+  let light = {
+    name: name,
+    getState: function() { 
+      return state;  // <1>
+    },
+    next: function() {
+      switch(state) {
+        case 'red': 
+          state = 'green'; 
+          break;
+        case 'green': 
+          state = 'yellow'; 
+          break;
+        case 'yellow': 
+          state = 'red'; 
+          break;
+        default:
+          throw new Error('why is the state = ', this.getState());
+      }
+    },
+    toString: function() {
+      return name + ' is ' + this.getState(); // <2>
+    }
+  };
+  return light;
+}
+
+let mainAndFirst = makeTrafficLight('Main Street and First Ave.');
+
+console.log(mainAndFirst.toString());
+
+for (let i = 1; i <= 4; i++) {
+  mainAndFirst.next();
+  console.log(mainAndFirst.toString());
+}
+----
+
+<1> the state of the light is hidden inside the closure
+<2>  returned object binds to the `name` and `state` variables.
+
+
+We'll discuss Object Orientation (in JS) in depth in the next lesson. For now, let's get back to functions!
+
+## A Function Closure
+
+The key to understanding closure is to know that a function declared in a scope can **ALWAYS** access other variables in that scope.
+
+*Even when that function is executing outside of the declaring function!*
+
+.JavaScript
+[source,javascript,linenums]
+----
+// A Function Closure
+function makeAdder(x) {
+  // here we create and return a closure that binds to x
+  return function(y) {
+    return x + y;
+  }
+}
+
+let add3 = makeAdder(3);
+let add100 = makeAdder(100);
+
+console.log('  3 + 5 = ' + add3(5));    // 8
+console.log('100 + 5 = ' + add100(5));  // 105
+console.log('  3 + 7 = ' + add3(7));    // 10
+console.log('100 + 7 = ' + add100(7));  // 107
+----
+
+[NOTE]
+Take 7 minutes and divide the console.logs above your pair and explain what is going on with each one 
+
+[source, javascript, linenums]
+.With Strings
+----
+function onArrival(whatAction){
+  return function(whatDoor){
+      return `${whatAction} ${whatDoor}`
+  }
+}
+
+let knock = onArrival('knock on')
+
+// locked out
+console.log(knock('front door'))
+console.log(knock('back door'))
+
+// found garage door opener
+let open = onArrival('open')
+
+console.log(open('Garage Door'))
+console.log(open('inner door to kitchen'));
+
+// found spare key
+let unlock = onArrival('unlock')
+
+console.log(unlock('front door'))
+console.log(open('front door'))
+----
+
+## Encapsulation.
+
+Encapsulation is a software concept where one separates the implementation from the interface that is used by clients.
+
+It's often good to *hide* the details of how something is being done from outside code, that is the client code.
+
+This will reduce the knowledge needed by the client.
+
+For example, when we drive our cars we don't worry about the specifics of the engine or drive-train. We interface with the car using the gas pedal, brake and steering wheel.
+
+The engine and drive-train are part of the car's implementation.
+
+The gas pedal, brake pedal and steering wheel are the car's interface to client, the driver.
+
+### A code example
+**Create a file `js/makePerson.js`**
+
+Below is a people factory. Give it a name and an age and it'll create a person.
+That is, it will create objects that represent a specific person.
+
+.JavaScript
+[source,javascript,linenums]
+----
+// function declaration
+function square(x) {
+  return x * x;
+}
+function makePerson( fullName, currentAge ) {
+  const name = fullName;   
+  const age = currentAge;   
+
+  const person = {   // <1>
+    getName: function() {
+      return( name );
+    },
+
+    getAge: function() {
+      return( age - 10 );
+    }
+  };
+
+  return( person ); // <2>
+}
+
+// Create a new person instance.
+const bob = makePerson( "Bob", 45 ); // <3>
+
+// Check to see if the age property exists in a public
+// portion of the person instance.
+console.log("Can we access the Bob's age?");
+console.log("age" in bob); // <4>
+
+// Get the age using the accessors.
+console.log("Age is (little lie here):");
+console.log(bob.getAge()); // <5>
+----
+
+
+. We are creating an object literal, `{ ... }`. This will have two properties, getName and getAge. The value for both of these properties are functions. We then assign this object literal to the variable person.
+. We return the `person` object to the calling function.
+. We use the factory to create a `bob` person.
+. We check to see if we can access the private variable `age` outside of the factory function.
+  - *We can't!* - this is *good!*
+. We get Bob's age by calling the getAge method. *Of course it lies*. And we're hiding the lie!
+
+
+Note, the interface to the object 'bob' is two functions/methods, getName and getAge. That's all that client code needs to know about bob.
+
+The implementation are the private variables `name`, `age` and the code inside the getName and getAge functions.
+
+Client code does *NOT* need to be concerned with implementation details. Only with the interface.
+
+
+## Lab - 2 - Scope and Closure
+
+Work through the Nodeschool link:https://github.com/workshopper/scope-chains-closures[Scope and Closures^] Exercises. 
+
+[IMPORTANT]
+Follow the steps below for completing the exercise
+
+* Create a new directory titled `nodeschool-exercises`
+* In the command line, paste the following code: +
+[source, shell]
+----
+docker container run -it --rm -v ${PWD}:/usr/app/nodeschool-exercises shanebarringer/nodeschool-exercises
+----
+* Once inside the container
+** Create a directory named `sccjs` and `cd` into it
+** Type `sccjs` to start the exercises.
+** When finished with a challenge run `scope-chains-closures verify <your-file.js>`  to verify your solution
+** Then run `sscjs` again to move on to the next challenge
+
+_detailed instructions for this exercise can be found link:https://hub.docker.com/r/shanebarringer/nodeschool-exercises/[here^]_
+
+## Summary
+
+Closures provide a mechanism for storing the values variables created in the outer scope. Those values are **enclosed** and accessible in any context a function might be used. 
+
+Additionally, functions can store inner functions as closures. These inner functions will be created only when the outer function is invoked, yet they still have access to all the values of the parent function. 
+
+Closures provide an excellent means of encapsulation. 
+
+
+
+## Additional References
+* http://markdaggett.com/blog/2013/02/25/getting-closure/[Getting Closure^]
+* http://javascriptissexy.com/understand-javascript-closures-with-ease/[Understand closures with ease^]
+* http://jibbering.com/faq/notes/closures[Closure FAQ^]
+* http://www.bennadel.com/blog/2134-a-random-exploration-of-closure-use-cases-in-javascript.htm[Closure Use Cases^]
+* http://toddmotto.com/everything-you-wanted-to-know-about-javascript-scope/[Everything you wanted to know about JavaScript scope^]

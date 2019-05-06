@@ -1,0 +1,22 @@
+# {title}
+:title: mult-table.js
+:library: Asciidoctor
+:source-highlighter: pygments
+:pygments-linenums-mode: table
+:experimental:
+:last-update-label!:
+
+[source,javascript,linenums]
+.JavaScript
+----
+function printMultTable(min, max) {
+  for (var x = min; x <= max; x++) {
+    console.log('');
+    for (var y = min; y <= max; y++) {
+      console.log(x + ' x ' + y + ' = ' + x * y);
+    }
+  }
+}
+
+printMultTable(1, 12);
+----

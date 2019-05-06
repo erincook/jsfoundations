@@ -1,0 +1,291 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+Introduction to JavaScript
+:lesson-title: Modern Array Methods
+:tags: javascript arrays functional-programming
+:description: An Introduction to JavaScript's Modern Array Methods
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+* List the modern JavaScript array methods
+* Discuss the advantages of the modern array methods
+
+### Skills
+
+* Use `indexOf` to find the index of an item in an array.
+* Use `filter` to filter an array with a provided callback function.
+* Use `find` to find the first matching item in an array
+* Use `forEach` to iterate over an array without using an index variable.
+* Use `map` to transform the values in an array.
+* Use `reduce` to summarize the values of an array into a single value.
+
+
+## Array.prototype Methods
+
+### indexOf
+
+You can use `indexOf` to find the index of a value in an Array. `indexOf` can find either primitive values or JavaScript objects. If the value is not found, `indexOf` will return -1.
+
+Here is an example using `indexOf`:
+
+.indexOf
+[source,javascript,linenums]
+----
+const fruits = ['apple', 'orange', 'banana', 'peach', 'pear'];
+const peachIndex = fruits.indexOf('peach');
+if (peachIndex !== -1) {
+  console.log('we have a peach at index =', peachIndex);
+}
+else {
+  console.log('we have no peach.');
+}
+----
+
+And the output is:
+
+    we have a peach at index = 3
+
+### filter
+
+The `filter` method creates a new array with all elements that pass the test implemented by the provided function.
+
+Here is an example using `filter`:
+
+.filter
+[source,javascript,linenums]
+----
+let values = [1, -5, -2, 3, 12, -14, 0, 23, -1, 8];
+
+const negValues = values.filter( function(v) {
+  return v < 0;
+});
+
+console.log('The negative values are:', negValues);
+----
+
+And the output is:
+
+    The negative values are: [ -5, -2, -14, -1 ]
+
+
+### forEach
+
+The `forEach` method executes a provided function once per array element. Thus we can _iterate_ over an Array without needing an `index` variable (like we had with the classic for loop of `for(let i = 0; i < arr.length; i++)`.
+
+Here is an example using `forEach`:
+
+.forEach
+[source,javascript,linenums]
+----
+let arr = [1, 2, 3, 4, 5, 6, 7, 8];
+
+arr.forEach(function(item) {
+	console.log(item);
+});
+----
+
+And the output is:
+
+```
+1
+2
+3
+4
+5
+6
+7
+8
+```
+
+### find
+
+Similar to `filter`, we can use `find` to locate the first matching item in the array. 
+
+.find
+[source,javascript,linenums]
+----
+const fruits = ['apple', 'orange', 'banana', 'peach', 'pear'];
+
+const selectedFruit = fruits.find(function (fruit) {
+  return fruit === 'orange'
+})
+----
+
+### map
+
+The `map` method creates a new array with the results of calling a provided function on every element in the array. You can think of `map` as _mapping_ the elements of one Array to the elements of a new Array using a mapping function that you provide.
+
+[TIP]
+====
+Remember learning about `domain` and `range` from Algebra? This is basically what the `map` function does.
+
+image::domain-range-codomain.gif[Domain and Range]
+====
+
+Here is an example using `map`:
+
+.map
+[source,javascript,linenums]
+----
+let values = [1, 2, 3, 4, 5];
+
+const squares = values.map(function(value) {
+  return value * value;
+});
+
+console.log('squares: ', squares);
+----
+
+And the output is:
+
+    squares: [ 1, 4, 9, 16, 25 ]
+
+
+### reduce
+
+The `reduce` method applies a function against an accumulator and each value of the array (from left-to-right) has to reduce it to a single value. You can think of `reduce` as reducing an Array to a single value using the function you provide.
+
+Here is an example of using `reduce`:
+
+.reduce
+[source,javascript,linenums]
+----
+let values = [1, -5, -2, 3, 12, -14, 0, 23, -1, 8];
+
+let sum = values.reduce(function(accumulator, v) {
+  return accumulator + v;
+}, 0);              // zero is the initial value of the accumulator
+
+console.log('The sum is', sum);
+----
+
+And the output is:
+
+    The sum is 25
+
+## Composition
+
+Functional programming allows us to *chain* functions together where the output of one function becomes the input for the next. This is a form of _functional composition_ and can be used to write very powerful and concise code!
+
+To aid in making the code concise, we can substitute the new `arrow function` feature of ECMAScript 2015 for the callback functions. For example:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const sum = function(a, b) {
+  return a + b;
+}
+----
+
+Combining modern Array methods and the new arrow functions can be written more concisely as:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const sum = (a, b) => a + b;
+----
+
+_we'll dig into Arrow Functions in the nxt lesson_
+
+Using the modern Array methods with the arrow functions can result in code like the following:
+
+.plusOne
+[source,javascript,linenums]
+----
+const numbers = [1, 2, 3, 4, 5];
+const plusOneTotal = numbers.reduce(function(acc, curr){
+    return acc + curr + 1
+  }, 0);
+
+console.log("result: " + plusOneTotal);
+// 20
+----
+
+And the output is:
+
+    result: 20
+
+
+### Map, Filter, Reduce Example
+
+Here is another example that adds up just the numeric values in an array:
+
+.JavaScript
+[source,javascript,linenums]
+----
+const source = ['1', '1', 'foo', '2', '3', '5', 'bar', '8', '13'];
+
+const result = source.map(function (str) {
+  return parseInt(str)
+})
+  .filter(function (n) {
+    return !isNaN(n)
+  })
+  .reduce(function (x, y) {
+    return x + y
+  });
+
+console.log('result:', result);
+----
+
+And the output is:
+
+    result: 33
+
+
+
+
+## Summary
+
+Each of these methods provides an easy way to iterate over an Array doing a:
+
+* search - `indexOf`
+* filter - `filter`
+* basic iteration - `forEach`
+* transformation - `map`
+* reduction - `reduce`
+
+NOTE: None of these methods alter (mutate) the original Array. Rather they each return a value or Array of values. The approach of returning new values and not altering the original Array is a part of what is known as _Functional Programming_.
+
+---
+
+.Map, Filter, and Reduce with Emojis
+image::map-filter-reduce-with-emojis.jpg[map-filter-reduce-with-emojis.jpg]
+
+
+## Lab - Working with Array Methods
+
+### Sum of Squares
+
+- Complete the link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/blob/master/arrays/instructions/04-Sum-Of-Squares.md#sum-of-squares[04 Sum of Squares Lab^]
+
+- Instructions can be found at the link above, or locally with `npm run instructions` and selecting `04-Sum-of-Squares` from the Arrays section. 
+
+- starter code can be found at `arrays/sumOfSquares.js`
+
+- tests can be run with `npm run test:sumOfSquares`
+
+### Array Methods
+
+- Complete the link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/blob/master/arrays/instructions/05-Array-Methods.md#array-methods[05 Array Methods Lab^]
+
+- Instructions can be found at the link above, or locally with `npm run instructions` and selecting `05-Array-Methods` from the Arrays section. 
+
+- starter code can be found at `arrays/arrayMethods.js`
+
+- tests can be run with `npm run test:arrayMethods`
+
+## Additional Resources
+
+* link:http://colintoh.com/blog/5-array-methods-that-you-should-use-today[5 Array Methods That You Should Use Today^]
+
+* link:https://codeburst.io/javascript-learn-to-chain-map-filter-and-reduce-acd2d0562cd4[Learn to Chain Map, Filter, and Reduce]
+
+* link:https://www.airpair.com/javascript/javascript-array-reduce[Understand Reduce in 1 Minute]
+

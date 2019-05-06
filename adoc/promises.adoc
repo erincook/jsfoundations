@@ -1,0 +1,460 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OrangeMethod"] {lesson-title}
+Modern JavaScript
+:lesson-title: JavaScript Promises
+:tags: javascript promises async
+:description: An Introduction to JavaScript Promises
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+* Describe why async operations require Callbacks or Promises
+* Describe the problem of _callback hell_
+* List the advantages of using Promises
+
+### Skills
+
+* Use a promise library to handle async operations.
+* Use `Promise.all` to handle a set of parallel async operations.
+
+## Understanding The Problem
+
+* Promises were created to solve a problem.
+* The problem is how do we handle asynchronous operations, for example:
+
+.Using Callbacks for Handling Async Operations
+[source,javascript,linenums]
+----
+function getData(callback) {
+   const mockDataFromAPI = { 
+          status: null,
+          message: null
+   }
+
+    console.log('fetching data....') 
+
+   function callToServer(){                               // <1>
+      console.log('handling response from server')
+      mockDataFromAPI.status = 200;                               // <2>
+      mockDataFromAPI.message = "i'm a response from the server"; // <2>
+      callback(mockDataFromAPI);                                  // <3>
+   }
+       
+   setTimeout(callToServer, 2000)                                 // <4>
+  
+}
+
+getData(function(data) {                                          // <5>
+  console.log('we finally got our data: ', data);                 // <6>
+});
+----
+
+<1> Mock API call 
+<2> Mock response `status` code and `message`
+<3> Invoke `callback` function
+<4> Mock delay and trigger `callToServer` after 2 seconds
+<5> Call `getData` function passing any anonymous callback function
+<6> Do something with `mockDataFromAPI`
+
+
+### Problems with Callbacks
+
+image:callback-hell.gif[width="400" role="right" title="callback-hell"]
+
+* You don't (synchronously) get a _receipt_, so you can't pass it around or check its status.
+* You may need to pass 2 callbacks:
+  - onSuccess(value)
+  - onError(err)
+* It isn't easy to connect multiple async operations together:
+  - chaining / sequential execution => results in *callback hell*, i.e. code that is hard to read and maintain.
+  - parallel execution => just plain hard to do.
+
+
+## How Do Promises Help
+
+Promises are really just *callbacks in disguise*. Actually *promises are objects* that manage your callbacks for you and allow you to combine promises (callbacks) with other promises (callbacks) in a structured way.
+
+Promises make our lives better by *improving upon callbacks*.
+
+## What Are Promises?
+
+Promises are:
+
+* Objects that have state, the state being one of the following:
+  - `PENDING`: we are still waiting for the data
+  - `RESOLVED`: we have successfully received the data
+  - `REJECTED`: an error has occurred
+* Objects that manage callbacks:
+  - `resolve` - the success callback
+  - `reject` - the error callback
+* Objects that can be chained together
+  - Promises have a `then` method that takes a callback used to process the data once it is available.
+  - Promises have a `catch` method that takes a callback used to process any errors that might have occurred.
+
+TIP: `resolve` and `reject` are used to report the data or error, while `then` and `catch` are used to handle the data or error. This is a _separation of concerns_ pattern! Often the `resolve` and `reject` are hidden in an implementation library (such as _Knex_ or _Bookshelf_) while the `then` and `resolve` callbacks are what we code as part of our business logic (what we want to do with the data or error).
+
+## How Do I Create A Promise?
+
+You create a Promise by calling a _constructor_ function. The promise constructor takes one argument, a callback with two parameters, `resolve` and `reject`. The callback does something interesting such as calling an async operation, and then calls `resolve` if everything worked, otherwise it calls `reject`. It's customary, but not required, to reject with an Error object.
+
+Here is the Promise pattern:
+
+### Promise Constructors 
+
+.JavaScript
+[source,javascript,linenums]
+----
+const promise = new Promise((resolve, reject) => { // <1>
+  // do a thing, possibly async, then…
+
+  if (/* everything turned out fine */) {
+    resolve("Stuff worked!"); // <2>
+  }
+  else {
+    reject(Error("It broke")); // <3>
+  }
+});
+----
+
+<1> Create a new Promise `constructor` function
+<2> `resolve` if conditions are met
+<3> `reject`  if the conditions are not met 
+
+### `.then()` & `.catch()`
+
+To work with the promise, we'll pass the `resolved` value as an argument to `.then`
+
+
+.JavaScript
+[source,javascript,linenums]
+----
+promise.then(result => { // <1>
+  console.log(result);   // <2>
+})
+.catch(err) {            // <3>
+  console.log(err);      // <4>
+});
+----
+
+<1> if the promise is `resolved`, pass the value to `.then()`
+<2> do something with the `resolved` value
+<3> if the promise is `rejected`, pass the error to `.catch()`
+<4> display the error
+
+Here is a simple working example:
+
+.JavaScript
+[source,javascript,linenums]
+----
+function getAnswerToEverything() {
+  return new Promise((resolve, reject) => {
+    const value = 42;
+    resolve(value);
+  });
+}
+
+getAnswerToEverything().then(answer => console.log(answer)); // 42
+----
+
+[TIP]
+.Usually **You** Will Not Need To Create The Promise
+====
+When using promise based libraries, like _Knex_ and _Bookshelf_, you will not be creating the promises, the library will do that. You just need to add your `.then()` and `.catch()` handlers to the promises returned from the library.
+====
+
+
+## An Example
+
+Below is an example of building a message using 3 functions (`greeting`, `name`, and `ending`) that each return a part of the greeting asynchronously.
+
+### Using The Callback Approach:
+
+.Callbacks
+[source,javascript,linenums]
+----
+const delay = (cb, timeToWait = 500) => setTimeout(cb, timeToWait);
+
+const logMessage = msg => console.log(`${new Date()} | ${msg}`);
+
+const subjectLine = (cb) => {
+  const value = '\nCallbacks\n';
+  delay(() => cb(value));
+}
+
+const body = (cb) => {
+  const value = 'Check out this article on the callback pattern\n';
+  delay(() => cb(value));
+}
+
+const closing = (cb) => {
+  const value = 'Thanks';
+  delay(() => cb(value));
+}
+
+// Example Code
+
+logMessage('START');
+
+const sendEmail = () => (
+  subjectLine(s => {
+    body(b => {
+      closing(c => {
+        logMessage(s + b + c);
+        logMessage('DONE');
+      });
+    });
+  })
+)
+
+sendEmail()
+----
+
+[TIP]
+The `delay` and `logMessage` functions are simple functions written to mock asynchronous code. 
+
+### Using Promises
+
+As you can see, the above approach can become very difficult to read. Let's take a look at the standard approach with promise chains. 
+
+We'll start by creating Promise constructors. 
+
+.Promise Constructors
+[source,javascript,linenums]
+----
+const subjectLine = () => {
+	return new Promise((resolve, reject) => 
+	  delay(() => resolve('\nGood Morning\n'))
+	);
+};
+
+const body = () => {
+	return new Promise((resolve, reject) =>
+		delay(() => resolve('Check out the following article about promises\n'))
+	);
+};
+
+const closing = () => {
+	return new Promise((resolve, reject) => 
+	  delay(() => resolve('Thanks!'))
+	);
+};
+
+const delay = (cb, timeToWait = 500) => setTimeout(cb, timeToWait);
+
+const logMessage = msg => console.log(`${new Date()} | ${msg}`);
+
+----
+
+Now, we'll create a promise chain and execute the code.
+
+[source, javascript]
+.Sequential Execution - with chaining
+----
+const sendEmail = () => {
+  let message;
+
+  return subjectLine()                        // <1>
+    .then(subject => {                        // <2>
+      message = subject;                      // <3>
+      return body();                          // <4>
+    })
+    .then(b => {                              // <5>
+      message += b;                           // <6>
+      return closing();                       // <7>
+    })
+    .then(c => {                              // <8> 
+      message += c;                           // <9>
+      logMessage('with chaining: ' + message); // <10>
+    });
+}
+
+sendEmail()
+----
+
+<1> Call the `greeting` function (which will return a promise)
+<2> pass the return value of `greeting` (as `g`) to your `.then` function
+<3> store the *resolved* value of `greeting` in the `message` variable. 
+<4> return the `name` function
+<5> pass the return value of the `name` function (as `n`) to the next function in the promise chain
+<6> add the *resolved* value of `name` to the `message` variable
+<7> return the `ending` function
+<8> pass the return value of the `ending` function (as `e`) to the next function in the promise chain
+<9> add the *resolved* value of `ending` to the `message` variable
+<10> log the contents of the `message` variable
+
+
+
+[source, javascript]
+.Sequential Execution - no chaining
+----
+const sendEmail = () => ( 
+  subjectLine()
+    .then(s => body()
+      .then(b => closing()
+        .then(c => logMessage('without chaining: ' + s + b + c)
+      )
+    )
+  )
+)
+
+sendEmail()
+----
+
+The above example definitely resembles the callback pattern. In a future lesson, we'll dicuss a new pattern named `async/await` that makes the above code signficantly more readable. 
+
+#### `Promise.all([])`
+
+Promises allow us to execute multiple operations simultaneously and wait for each promise to resolve individually before proceeding. Once all promises have resolved, the data will passed as an array to a `then` function as an array. 
+
+A few examples of where this pattern is beneficial include:
+
+* fetching data from multiple endpoints
+* multiple database queries
+* merging data together from multiple sources
+
+[source, javascript]
+.Parallel Execution
+----
+Promise.all([ subjectLine(), body(), closing() ])
+  .then( [s, b, c]) => {
+    logMessage('Parallel Execution: ' + s + b + c);
+  });
+----
+
+Behind the scenes `Promise.all` takes an array of promises as a parameter and returns a `Promise` that will be fulfilled with an array of response values *only when all of the promises are fulfilled*.
+
+This ensures that code dependent on the return value of our promises does not execute until all values are accounted for. 
+
+#### Additional Examples
+[source, javascript]
+.Mixed Parallel and Sequential
+----
+Promise.all( [subjectLine(), body()] )
+.then( ([s, b]) => {
+  closing().then(c => {
+    logMessage('Mixed Execution v1: ' + s + b + c);
+  });
+});
+----
+
+[source, javascript]
+.Another Mixed Parallel and Sequential
+----
+subjectLine().then(s => {
+  Promise.all( [body(), closing()] )
+    .then( (b, c) => {
+      logMessage('Mixed Execution v2: ' + s + b + c);
+  });
+});
+----
+
+
+## Thoughts on Sequential vs. Parallel Execution
+
+Sometimes we have dependencies between async operations, i.e. _sequential_ operations. At other times we have independent operations that can be executed in _parallel_. Finally we may have a more complex scenario consisting of both _sequential_ and _parallel_ operations.
+
+image::seq-and-parallel-execution.svg[sequential and parallel execution]
+
+Promises make it possible to group together any kind of exuction pattern, while keeping your code easy to reason about. 
+
+
+## Error Handling with Promises
+
+Promises make error handling simpler:
+
+.error-handling.js
+[source,javascript,linenums]
+----
+function getRandomNumber() {
+  return new Promise( (resolve, reject) => {
+    const value = Math.random();
+    if (value > 0.2) {
+      console.log('  resolving with value:', value);
+      resolve(value);
+    }
+    else {
+      reject(new Error("I really don't like small numbers like " + value) );
+    }
+  });
+}
+
+Promise.all([
+  getRandomNumber(),
+  getRandomNumber(),
+  getRandomNumber()
+])
+.then( (num1, num2, num3) => {
+  const avg = (num1 + num2 + num3) / 3;
+  console.log('The average is:', avg);
+})
+.catch( err => console.log('ERROR:', err.message) );
+----
+
+Below is some sample output:
+
+```
+node error-handling.js
+  resolving with value: 0.31050940203163324
+  resolving with value: 0.8810695184701074
+  resolving with value: 0.8105507744421354
+The average is: 0.6673765649812919
+
+node error-handling.js
+  resolving with value: 0.8929946718015993
+  resolving with value: 0.9123906146905005
+ERROR: I really don't like small numbers like 0.009725636334833254
+```
+
+## LAB 1 - calculator promise
+
+* Use the code sample below to create a calculator promise function 
+
+[source, javascript]
+----
+const calculate = (x, y) => {
+  return new Promise()
+}
+----
+
+* Start by resolving the function immediately 
+* Because you're accepting 2 values, you'll need to make your `resolve` value an object
+* After your function resolves `log` the sum of the 2 values
+* If the values aren't numbers, `reject` the promise
+* display the error message
+
+## Summary
+
+Promises are used to handle the asynchronous flow of JavaScript in a more logical manner. By mastering promises, you will be able to perform operations in a straight-forward manner. 
+
+- A Promise is an object with set values
+- Promises can be chained together with `.then()`
+- The return value from one promise is passed to the next function as an argument
+- Errors can be handled with a `.catch` function
+- The majority of the time, you will be working with libraries that have already constructed promises for you.
+
+## Lab 2 - Promise it won't hurt
+
+As with many topics, the best way to learn promises, is to work with them. Use the Nodeschool link:https://github.com/stevekane/promise-it-wont-hurt[Promise it won't hurt^] module to get more experience with Promises. 
+
+### Bootcamp Submission Instructinos
+
+* Complete the Nodeschool module
+* Push finished code to GitHub
+  ** It is recommended to push each exercise as you complete them
+* Tag instructors for a review (meaning, don't commit to master, instead submit a PR)
+
+
+
+## Additional Resources
+
+
+* link:https://developers.google.com/web/fundamentals/getting-started/primers/promises[JavaScript Promises: an Introduction^]
+* link:http://www.mattgreer.org/articles/promises-in-wicked-detail/[Promises in Wicked Detail^]
+
+video::2d7s3spWAzo[youtube]
+

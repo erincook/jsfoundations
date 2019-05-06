@@ -1,0 +1,46 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OrangeMethod"] {lesson-title}
+Modern JavaScript
+:lesson-title: JavaScript Promises Lab Solutions
+:tags: javascript promises async
+:description: An Introduction to JavaScript Promises
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+## LAB - calculator promise
+
+* Use the code sample below to create a calculator promise function 
+
+[source, javascript]
+----
+const calculate = (x, y) => {
+  return new Promise()
+}
+----
+
+* Start by resolving the function immediately 
+* Because you're accepting 2 values, you'll need to make your `resolve` value an object
+* After your function resolves `log` the sum of the 2 values
+* If the values aren't numbers, `reject` the promise
+* display the error message
+
+### Solution
+
+[source, javascript]
+----
+const calculate = (x, y) => {
+  return new Promise((resolve, reject) => {
+    if (typeof x === 'number' && typeof y === 'number'){
+       resolve({x, y})
+    } else {
+      reject(Error('please enter two valid numbers'))
+    }
+  })
+}
+
+calculate(2, 3)
+  .then(data => {
+    console.log(data.x + data.y)
+  })
+  .catch(err => {
+    console.log(err)
+  })
+----

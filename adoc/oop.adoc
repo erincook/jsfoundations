@@ -1,0 +1,485 @@
+# image:orange-method-sticker.png[caption="Orange Method", title="Orange Method", alt="Orange Method", width="130", link="https://github.homedepot.com/OM-JavaScript"] {lesson-title}
+JavaScript Foundations
+:lesson-title: Object Orientation in JavaScript
+:tags: javascript objects json oop object-oriented classes
+:description: An Introduction to OOP Concepts with JavaScript
+include::../node_modules/@orangemethod/asciidoc-common/vars.adoc[]
+
+{description}
+
+link:index.html[Back to JavaScript Foundations]
+
+## Learning Objectives
+
+### Concepts
+
+* Showcase Object Orientation within JavaScript
+* Discuss the differences between classical and prototypal inheritance
+* Learn about Prototypes and Constructor functions
+
+
+### Skills
+
+* Explain when to use prototypes and constructors
+* Understanding of JavaScript object orientation
+
+## Constructors
+
+Object-oriented programming (OOP) is a programming model organized around objects rather than "actions". Essentially, data, rather than logic.
+
+While JavaScript is more suited to functional programming, it does have some Object Oriented features that we need to understand.
+
+Some key concepts in OO:
+
+* Class - A template (or blueprint) for a new object
+* Instance - A single object created from a class
+* Inheritance - A class or object can inherit properties from a parent class
+* Encapsulation - Enclosing an object's data and functionality inside of it.
+
+### LAB 1 - Dog Objects
+
+* Create a dog object with the following properties:
+** Name
+** Owner
+** Age
+** Gender
+** A `speak` functions that log's "woof, woof" to the console
+* Once you've built your object, create 3 more dog objects with the new values. +
+_note: you can re-use the speak function_
+* make your objects speak!
+
+
+### Classes
+
+As you can see, this repetition of creating objects can become quite tedious. Even with lots of copying and pasting, you're probably thinking _there has to be a better way_
+
+Traditional Object Oriented languages aim to solve this problem by creating classes. A class serves as a template for objects that you'll be creating. This means that you would craft a class with specific attributes that your object will need to have.
+
+For example, an `Instructor` class, might have:
+
+* The instructor's name
+* Lesson they'll be teaching
+* etc
+
+This logic (in part) is available in JavaScript, let's take a look at a simple example
+
+In JS, you create (what appears to be) a class by simply defining a constructor.
+
+[IMPORTANT]
+A constructor is a function used to create a new instance of an object
+
+[TIP]
+Constructor functions can be considered object factories
+
+[source,javascript,linenums]
+.Simple Example
+----
+function Teacher(name) {
+	this.name = name; // <1>
+	this.teach = function() {
+		console.log(this.name + " says constructors are cool");
+	}
+}
+
+const teacher1 = new Teacher('Shane'); <2>
+const teacher2 = new Teacher('Brandon');
+
+teacher1.teach();
+teacher2.teach();
+----
+
+
+<1> Attributes are assigned to the object using the `this` keyword
+<2> The `new` keyword calls the function and returns the resulting object.
+
+[TIP]
+This pattern is a good choice if you need to repeatedly created objects
+
+[NOTE]
+In this example, we are passing arguments into the constructor to customize our object
+
+### LAB 2 - Pet Constructors
+
+Use constructor functions to refactor your dog objects
+
+* Detailed instructions can be found here link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/blob/master/objects/instructions/02-Object-Orientation.md[Constuctor Exercises^]
+
+* The starter code can be found link:https://github.homedepot.com/OM-JavaScript/JavaScript-Foundations-Exercises/blob/master/objects/object-orientation.js[here^]
+
+* The tests can be started with `npm run test:object-orientation`
+
+
+
+
+
+image::dancing-dog.gif[alt]
+
+
+## Inheritance (Classical vs Prototypal)
+
+Traditional Object Oriented languages use a pattern of Classical Inheritance.
+
+Classical Inheritance models the world in terms of classes. +
+_ie: a `Teacher` class inherits from the`Person` class._
+
+JavaScript, on the other hand, uses *Prototypal Inheritance*, which is *instance* based.
+
+[source,javascript, linenums]
+.simple-example
+----
+function Teacher(name) {
+	this.name = name;
+}
+
+Teacher.prototype = {
+	teach: function(){
+		console.log('Prototypes are important, says ' + this.name);
+	}
+}
+
+const teach1 = new Teacher('shane');
+const teach2 = new Teacher('brandon')
+teach1.teach();
+teach2.teach()
+----
+
+In the above example, our objects inherit properties from the Teacher prototype object.
+
+How is this different than just using constructors?
+
+* A prototype object is a live instance
+* The prototype object is shared across all instances.
+
+[TIP]
+`Teacher.prototype` is an object
+
+[source,javascript, linenums]
+----
+function Teacher(name) {
+	this.name = name;
+}
+
+Teacher.prototype = {
+	disposition: 'evil'
+}
+
+const shane = new Teacher('shane');
+const mike = new Teacher('mike');
+console.log(shane.disposition, mike.disposition) //evil, evil
+
+Teacher.prototype.disposition = 'happy';
+console.log(shane.disposition, mike.disposition) //happy, happy
+----
+
+### Constructors vs Prototype
+
+These two techniques seem pretty similar. When would you use one over the other?
+
+* *Constructors*
+** Once an instance is created, it no longer has a connection to the class or other instances.
+* *Prototype*
+** Gives you the power to control many instances after creation
+** Is more memory efficient because it removes duplication
+
+### LAB 3 - Pet Prototypes
+
+* Remove the `speak` function and `species` property from your constructor
+* Using Prototypes...
+** Add the `speak` function and `species` property
+** Create a `playFetch` function that uses the owner and pet's name to play fetch. +
+_ie: Shane throws tennis ball for Hezekiah to find and bring back_
+
+image::dog-fetch.gif[alt]
+
+### Prototype Chain
+
+What happens if an instance has a property with the same name as a prototype property?
+
+[source, javascript, linenums]
+----
+function Teacher() {}
+
+Teacher.prototype = {
+	name: 'John Doe'
+}
+
+const shane = new Teacher();
+const mike = new Teacher();
+
+shane.name = "Shane";
+
+console.log(shane.name, mike.name) //'Shane', 'John Doe'
+----
+
+If `name` is a prototype property, why didn't it change both instances' names?
+
+This works just like scope chains
+
+[TIP]
+A property name is resolved by looking at the instance first. If the instance does not have a property with that name, then JS looks at the instance's prototype.
+
+Defining a property on an instance simply covers over the prototype's property. It doesn't replace it.
+
+[TIP]
+Think of instance properties as being "layered" on top of the prototype
+
+
+Prototype objects can have their own prototypes, resulting in a prototype chain. To resolve a property, the interpreter will look at the instance, then it's prototype, then its prototype's prototype, and so on.
+
+[quote, Kyle Simpson, You Don't Know JS - this and Object Prototypes]
+____
+In JavaScript, we don't make copies from one object ("class") to another ("instance"). We make links between objects.
+____
+
+
+[source,javascript,linenums]
+----
+function Person(){
+	this.brain = true;
+};
+function Student(){
+	this.computer = true;
+};
+function Graduate(){
+	this.skillz = 'Mad'
+};
+
+const p = new Person();
+Student.prototype = p;
+
+const s = new Student();
+Graduate.prototype = s;
+
+const g = new Graduate();
+
+console.log(g.skillz, g.computer, g.brain);
+
+----
+
+### hasOwnProperty
+
+Objects have a method called 'hasOwnProperty' that tells you if a method is defined on an instance itself or one of its parent prototypes.
+
+[source,javascript]
+----
+//Using example above
+console.log(g.hasOwnProperty('skillz'),g.hasOwnProperty('computer'))
+
+----
+
+* Note - `Object.create()` is an easy (and better) way to instantiate an object based on a prototype.
+
+[TIP]
+Prototype chains are important to understand, but try not to create complex class hierarchies in your JS code.
+
+## Object Composition
+
+An alternative to using inheritance is something known as Object Composition. This is also known as the *mixin pattern*.
+
+### The `Object.assign()` Method
+
+We can use `Object.assign(target, [...sources])` to copy properties from one or more objects into another without connecting them
+
+[source,javascript]
+----
+const lion = {
+	roar: function(){console.log('roar')}
+}
+
+const goat = {
+	kick: function(){console.log('kick')}
+}
+
+const lizard = {
+	tail: true
+}
+
+const chimera = {}
+Object.assign(chimera, lion, goat, lizard);
+
+chimera.roar();
+chimera.kick();
+chimera.tail;
+----
+
+Another example, could be that you need to get protected info from an API. The API is going to require some kind of verification.
+
+Given that your production and development setting are going to differ, you could create a base object with relevant info for prod. You can then clone that object and update only the info necessary for local development. 
+
+[source,javascript]
+.config.js
+----
+const baseConfig = { 								// <1>
+	appName: 'BestAppEver', 						// <2>
+	apiSecret: '<process.env.SUPER_SECRET>', 		// <2>
+	apiKey: '123456789', 							// <2>
+	apiBaseUrl: 'https://best-app-ever.com/api/' 	// <2>
+}
+
+const localConfig = Object.assign({}, baseConfig,   // <3>
+	{ 
+		apiKey: 'localDeveloperKey', 				// <4>
+		apiBaseUrl: 'http://localhost:3000/api' 	// <4>
+	}
+);
+
+console.log(localConfig.appName, localConfig.apiBaseUrl);
+----
+
+<1> Create an base object
+<2> Provide your key/pair values (like normal)
+<3> using `Object.assign()` supply the following arguments + 
+   . set the target as a new empty object
+   . supply the `baseConfig` as a source you want to clone/copy
+   . provide an object (as the third argument), with properties you want to modify or add +
+<4> For the third argument, provide the info you want to modify
+
+### The Spread Operator `...`
+
+ES2105 also gave us the gift of the *spread operator* which allows us to spread out the values found in arrays and objects. 
+
+The syntax for the spread operator looks just like an ellipses `...` 
+
+[NOTE]
+The `...` syntax is also used for Rest parameters
+
+#### Array Spread
+
+[source,javascript,linenums]
+----
+let random = ["Hello", "world", true, 99];
+let newArray = [1,2, ...random, 3];
+
+console.log(newArray);
+//[1,2,"Hello","world",true,99,3]
+----
+
+Another example, _spreading_ out the characters in an array or string. 
+
+
+For example let's separate out the characters found in "Hello World" and place them into an array.
+
+[source,javascript,linenums]
+.spread-characters
+----
+let hi = "Hello World"
+let hiArray = [ ...hi ]
+
+console.log(hiArray);
+// ["H","e","l","l","o"," ","W","o","r","l","d"]
+----
+
+So, how is this relevant to the current topic of Object Composition? 
+
+I'm glad you asked!
+
+[TIP]
+We can use the spread operator easily to clone arrays and objects. 
+
+As you may have noticed above, we easily the original array into a new array and added additional values. With that in mind, let's look at a more simplistic example
+
+[source,javascript,linenums]
+.clone-array
+----
+const students = ["kelly", "emily", "matt"]
+const graduates = [ ...students ]
+
+console.log(graduates);
+----
+
+
+#### Object Spread
+
+Can you guess the syntax for Object Spread?  
+
+Object spread swaps in `{}` for `[]` 
+
+[source,javascript,linenums]
+.clone-object
+----
+const course = {
+	name: "JavaScript Foundations",
+	awesome: true,
+	complete: false
+}
+
+const finishedCourse = {...course, complete: true} // <1>
+
+console.log(course, finishedCourse);
+----
+
+<1> clone the `course` object and update the `complete` value
+
+This syntax serves as an alternative to `Object.assign()`
+
+You will see this pattern widely used, out in the wild, when working with libraries that stress immutability. 
+
+One popular library you may have seen that implements this type of pattern is Redux. While Redux is outside of the scope of this course (OM does have a React-Redux Pillar Course btw!), it is useful to see the pattern in action. 
+
+[source,javascript,linenums]
+.redux-example
+----
+function todoApp(state = initialState, action) {
+  switch (action.type) {
+    case SET_VISIBILITY_FILTER:
+      return { ...state, visibilityFilter: action.filter }
+    // ...
+  }
+}
+----
+
+One final thought on the syntactical differences of `Object.assign()` or `...`
+
+
+Use whatever syntax makes the most sense for you and your team.
+
+The important thing to note is that you are using Object Composition, and that deserves a high five!
+
+image::high-five-pam-jim.gif[]
+
+## LABS 
+
+### planetproto
+
+* Head on over to the link:https://github.com/sporto/planetproto[Planet Proto GitHub page^] and follow the readme to get up and running
+* Alternatively, you can simply follow the steps below:
+** If you are using your own device, install planetproto. `npm install -g planetproto@latest` +
+_note: this is already installed on all OM devices_
+** create a new directory named *planetproto*
+** `cd` into that directory
+** run `npm install planetproto`
+** once the install finishes, run `planetproto` and follow the instructions
+
+### Mixins
+
+* Create a user profile object that contains properties for
+** name
+** address
+** city
+** state
+** zipcode
+** avatar
+* Write a function named `getProfileUpdate()` that _hypothetically_ asks the user to update their profile properties
+** this function should return information about the properties that were changed and list the new values. +
+_note: for now, just hard code the return value_
+* Write a function `updateProfile()` that takes a single object of _keys & values_ that overwrites those keys on the profile object
+* Using `getProfileUpdate`, update the user's profile
+* log the new profile
+
+
+## Summary
+
+While at it's core JavaScript is a functional language, making use of these object oriented principles can provide very fun and creative ways to accomplish your tasks.
+
+Understanding Prototypes is essential to becoming a solid JS developer.
+
+## Additional Resources
+
+link:https://medium.com/javascript-scene/common-misconceptions-about-inheritance-in-javascript-d5d9bab29b0a#.p5acvjy5g[Common Misconceptions About Inheritance in JavaScript^]
+
+link:https://github.com/getify/You-Dont-Know-JS/blob/master/this%20&%20object%20prototypes/README.md#you-dont-know-js-this--object-prototypes[this & Object Prototypes^]
+
+video::wfMtDGfHWpA[youtube]
+
+video::69255635[vimeo]
+
